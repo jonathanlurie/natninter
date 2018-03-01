@@ -1,4 +1,7 @@
 import Voronoi from 'voronoi';
+import { CellCollection } from './CellCollection.js';
+
+
 
 class Interpolator {
   constructor(){
@@ -8,7 +11,7 @@ class Interpolator {
     this._recomputeMap = true;
 
     // voronoi diagram of seeds only
-    this._seedVoronoiDiagram = null;
+    this._seedCellCollection = null;
   }
 
 
@@ -62,7 +65,10 @@ class Interpolator {
   * Though this method is not private and can be called to force recomputing the map
   */
   computeMap(){
-    this._generateSeedVoronoiDiagram();
+    //console.time("0")
+    //for(var i=0; i<512*512; i++)
+    this._generateSeedCells();
+    //console.timeEnd("0")
   }
 
 
@@ -70,14 +76,11 @@ class Interpolator {
   * [PRIVATE]
   * Generate the voronoi diagram where sites are only seeds
   */
-  _generateSeedVoronoiDiagram(){
+  _generateSeedCells(){
+    var that = this;
     var voronoi = new Voronoi();
     var bbox = {xl: 0, xr: this._output.width, yt: 0, yb: this._output.height};
-
-    var sites = new Array( this._seeds.length );
-    for(var i=0; i<sites.length; i++){
-      sites[i] = {x: this._seeds[i].x, y: this._seeds[i].y, seedIndex: i}
-    }
+    var sites = this._seeds.map( function( s, i ){ return {x: s.x, y: s.y, seedIndex: i} });
 
     // we could copy the ref but i am not sure what Voronoi does with it.
     // I must check before messing with ref.
@@ -88,9 +91,10 @@ class Interpolator {
     // sites. The 'voronoiId' can be used as a key to lookup the associated cell
     // in diagram.cells.
 
-    console.log( sites );
-    this._seedVoronoiDiagram = voronoi.compute(sites, bbox);
-    console.log( this._seedVoronoiDiagram );
+    var seedVoronoiDiagram = voronoi.compute(sites, bbox);
+
+    this._seedCellCollection = new CellCollection();
+    this._seedCellCollection.buildFromVoronoiDiagram( seedVoronoiDiagram );
   }
 
 
