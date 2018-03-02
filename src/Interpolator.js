@@ -65,10 +65,43 @@ class Interpolator {
   * Though this method is not private and can be called to force recomputing the map
   */
   computeMap(){
-    //console.time("0")
-    //for(var i=0; i<512*512; i++)
     this._generateSeedCells();
-    //console.timeEnd("0")
+    console.log( this._seedCellCollection );
+
+    var w = this._output.width;
+    var h = this._output.height;
+
+    var pixelCellCollection = this._generatePixelCells(160, 80);
+    this._seedCellCollection.getStolenAreaInfo( pixelCellCollection )
+
+    console.log( pixelCellCollection );
+
+    this._seedCellCollection.getStolenAreaInfo(pixelCellCollection)
+
+    return;
+
+    // for each pixel of the output image
+    for(var i=0; i<w; i++){
+      for(var j=0; j<h; j++){
+        if( this.isAtSeedPosition(i, j) )
+          continue;
+
+        var pixelCellCollection = this._generatePixelCells(i, j);
+      }
+    }
+
+    // TODO: finish map for seed positions
+  }
+
+
+  /**
+  * is the given position at the position of a seed?
+  * @param {Number} i - position along x axis
+  * @param {Number} j - position along y axis
+  * @return {Boolean} true if at a position of a seed, false if not
+  */
+  isAtSeedPosition(i, j){
+    return (this._seeds.findIndex(function(elem){ return (elem.x==i && elem.y==j)}) !== -1 )
   }
 
 
@@ -81,20 +114,24 @@ class Interpolator {
     var voronoi = new Voronoi();
     var bbox = {xl: 0, xr: this._output.width, yt: 0, yb: this._output.height};
     var sites = this._seeds.map( function( s, i ){ return {x: s.x, y: s.y, seedIndex: i} });
-
-    // we could copy the ref but i am not sure what Voronoi does with it.
-    // I must check before messing with ref.
-    // var sites = this._seeds
-
-    // a 'vertex' is an object exhibiting 'x' and 'y' properties. The
-    // Voronoi object will add a unique 'voronoiId' property to all
-    // sites. The 'voronoiId' can be used as a key to lookup the associated cell
-    // in diagram.cells.
-
     var seedVoronoiDiagram = voronoi.compute(sites, bbox);
 
     this._seedCellCollection = new CellCollection();
     this._seedCellCollection.buildFromVoronoiDiagram( seedVoronoiDiagram );
+  }
+
+
+  _generatePixelCells(i, j){
+    var that = this;
+    var voronoi = new Voronoi();
+    var bbox = {xl: 0, xr: this._output.width, yt: 0, yb: this._output.height};
+    var sites = this._seeds.map( function( s, i ){ return {x: s.x, y: s.y, seedIndex: i} });
+    sites.push( {x: i, y: j, seedIndex: -1} )
+    var pixelVoronoiDiagram = voronoi.compute(sites, bbox);
+
+    var pixelCellCollection = new CellCollection();
+    pixelCellCollection.buildFromVoronoiDiagram( pixelVoronoiDiagram );
+    return pixelCellCollection;
   }
 
 
