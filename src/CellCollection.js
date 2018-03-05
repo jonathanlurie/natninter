@@ -96,6 +96,8 @@ class CellCollection {
 
     var modifiedCells = [];
 
+    var stolenTotal = 0;
+
     for( var hash in this._cells ){
       if( hash === addedCell.getHash() )
         continue;
@@ -105,18 +107,22 @@ class CellCollection {
       var isSame = originalCell.hasSamePolygon( newCell );
 
       if( !isSame ){
+        //console.log( `Not same: ${hash}`);
+        var stolenRatio = 0;
         var stolenPoly = addedCell.intersectWithCell( originalCell );
-        var stolenArea = stolenPoly.getArea();
-        var stolenRatio = stolenArea / addedCellArea;
-        modifiedCells.push( {cell: originalCell, stolenRatio: stolenRatio} );
+
+        if( stolenPoly.isValid() ){
+          var stolenArea = stolenPoly.getArea();
+          stolenRatio = stolenArea / addedCell.getArea();
+          stolenTotal += stolenRatio;
+        }
+
+        //modifiedCells.push( {cell: originalCell, stolenRatio: stolenRatio} );
+        modifiedCells.push( {seedIndex: originalCell.getSeed().seedIndex, stolenRatio: stolenRatio} );
       }
     }
 
-    console.log( modifiedCells );
-    // TODO: test that!!!
     return modifiedCells;
-
-
   }
 
 

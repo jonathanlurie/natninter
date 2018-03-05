@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Test</title>
+</head>
+<body>
+  <!-- importing the automatically build module -->
+  <script src="../node_modules/greiner-hormann/dist/greiner-hormann.js"></script>
+  <script src="../node_modules/polybooljs/dist/polybool.js"></script>
+  <!-- The minified version is also accessible -->
+  <!-- <script src="../dist/natninter.umd.min.js"></script> -->
+
+  <p>Open Javascript console.</p>
+
+  <script>
+
+    var poly1 = [[175, 105],
+                [130, 60],
+                [210, 45],
+                [215, 65]];
+
+    var poly2 = [[256, 106],
+                [207.14285714285714, 57.14285714285714],
+                [215, 0],
+                [256, 0]];
+
+    var polyA = {
+                regions: [
+                  poly1
+                ],
+                inverted: false
+              }
+
+    var polyB = {
+                regions: [
+                  poly2
+                ],
+                inverted: false
+              }
+
+
+
+
+    //intersect
+
+    console.time("t");
+    var intersectC = PolyBool.intersect( polyA, polyB )
+    var intersection = greinerHormann.intersection(poly2, poly1);
+    console.timeEnd("t");
+    console.log( intersection );
+    console.log( intersectC );
+
+
+  </script>
+
+</body>
+</html>
+
+
+[208.78107457898957, 45.22854851643946],[210, 45],[215, 65],[175, 105],[130, 60],[208.78107457898957, 45.22854851643946]

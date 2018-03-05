@@ -11,8 +11,8 @@ class Cell {
   * @param {Array}
   */
   constructor( contourPoints, seed ){
-    this._polygon= new ConvexPolygon( contourPoints );
     this._hash = Cell.getHash( seed.x, seed.y )
+    this._polygon= new ConvexPolygon( contourPoints );
     this._seed = seed;
     this._isValid = (this._polygon.isValid() && !!this._hash);
   }

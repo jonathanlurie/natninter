@@ -16,7 +16,7 @@
     var seeds = [
       {x: 20, y: 50,  value: 100 },
       {x: 150, y: 30,  value: 30  },
-      {x: 270, y: 50, value: 120 },
+      {x: 250, y: 50, value: 120 },
       {x: 200, y: 120, value: 50  },
       {x: 100 , y: 150 , value: 150 },
       {x: 150 , y: 90 , value: 10 },
@@ -24,8 +24,10 @@
 
     var nnInter = new natninter.Interpolator();
     nnInter.addSeeds( seeds );
-    nnInter.computeMap()
 
+    console.time('map')
+    nnInter.computeMap()
+    console.timeEnd('map')
   </script>
 
 </body>

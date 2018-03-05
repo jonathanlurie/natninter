@@ -7,7 +7,7 @@ class Interpolator {
   constructor(){
     this._seeds = [];
     this._output = { width: 256, height: 256 };
-    this._weightMap = [];
+    this._samplingMap = [];
     this._recomputeMap = true;
 
     // voronoi diagram of seeds only
@@ -59,49 +59,76 @@ class Interpolator {
   }
 
 
+  hasAllSeedsInside(){
+    var size = this._output;
+    return this._seeds.every( function(s){
+      return ( s.x>=0 && s.y>=0 && s.x<size.width && s.y<size.width );
+    })
+  }
+
+
   /**
   * Compute the sampling map. Automatically called by the update method when the
   * map was never computed or when a seed have been added since.
   * Though this method is not private and can be called to force recomputing the map
   */
   computeMap(){
+    if( !this.hasAllSeedsInside() ){
+      console.log( 'ERR: some seeds are outside of the image. Use .setOutputSize() to change the output size or modify the seed.' );
+      return;
+    }
     this._generateSeedCells();
     console.log( this._seedCellCollection );
 
     var w = this._output.width;
     var h = this._output.height;
-
-    var pixelCellCollection = this._generatePixelCells(160, 80);
-    this._seedCellCollection.getStolenAreaInfo( pixelCellCollection )
-
-    console.log( pixelCellCollection );
-
-    this._seedCellCollection.getStolenAreaInfo(pixelCellCollection)
-
-    return;
+    this._samplingMap = new Array( w*h );
 
     // for each pixel of the output image
     for(var i=0; i<w; i++){
       for(var j=0; j<h; j++){
-        if( this.isAtSeedPosition(i, j) )
-          continue;
 
-        var pixelCellCollection = this._generatePixelCells(i, j);
+        var seedIndex = this.isAtSeedPosition(i, j);
+        var index1D = i + j*w;
+
+        if( seedIndex === -1 ){
+          //this._samplingMap[ index1D ] = this._generatePixelCells(i, j);
+          var pixelCellCollection = this._generatePixelCells(i, j);
+          var stolenAreaData = this._seedCellCollection.getStolenAreaInfo( pixelCellCollection )
+          this._samplingMap[ index1D ] = stolenAreaData;
+        }else{
+          this._samplingMap[ index1D ] = {seedIndex: seedIndex, stolenRatio: 1};
+        }
       }
     }
 
+
+    console.log( this._samplingMap );
     // TODO: finish map for seed positions
   }
 
+
+  getMap( m ){
+    return this._samplingMap;
+  }
+
+
+  setMap( map ){
+    if( map.length === (this._output.width * this._output.height)){
+      this._samplingMap = map;
+    }else{
+      console.log("The sampling map must be an 1D array of size output.x*output.y");
+    }
+  }
 
   /**
   * is the given position at the position of a seed?
   * @param {Number} i - position along x axis
   * @param {Number} j - position along y axis
-  * @return {Boolean} true if at a position of a seed, false if not
+  * @return {Boolean} -1 if not, of the index of the seed if yes
   */
   isAtSeedPosition(i, j){
-    return (this._seeds.findIndex(function(elem){ return (elem.x==i && elem.y==j)}) !== -1 )
+    return this._seeds.findIndex(function(elem){ return (elem.x==i && elem.y==j)})
   }
 
 
@@ -131,6 +158,10 @@ class Interpolator {
 
     var pixelCellCollection = new CellCollection();
     pixelCellCollection.buildFromVoronoiDiagram( pixelVoronoiDiagram );
+
+    if( pixelCellCollection._cellArray.length !== (this._seeds.length + 1))
+      console.log("ERR");
+
     return pixelCellCollection;
   }
 
