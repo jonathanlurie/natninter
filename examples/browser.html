@@ -1,6 +1,18 @@
 <html>
 <head>
   <title>Test</title>
+
+  <style>
+  #canvasParent {
+    width: 50vw;
+    height: auto;
+  }
+
+  #canvasParent canvas {
+    width: 100%;
+    height: auto;
+  }
+  </style>
 </head>
 <body>
   <!-- importing the automatically build module -->
@@ -10,9 +22,11 @@
   <!-- <script src="../dist/natninter.umd.min.js"></script> -->
 
   <p>Open Javascript console.</p>
+  <div id="canvasParent"></div>
 
   <script>
 
+    /*
     var seeds = [
       {x: 20, y: 50,  value: 100 },
       {x: 150, y: 30,  value: 30  },
@@ -21,13 +35,186 @@
       {x: 100 , y: 150 , value: 150 },
       {x: 150 , y: 90 , value: 10 },
     ]
+    */
 
-    var nnInter = new natninter.Interpolator();
-    nnInter.addSeeds( seeds );
+    var montage10_20 = [
+    {
+      name: "Fp1",
+      x: 0.375,
+      y: 0.125,
+      value: 2.28
+    },
+    {
+      name: "Fp2",
+      x: 0.625,
+      y: 0.125,
+      value: 2.01
+    },
+    {
+      name: "Fz",
+      x: 0.5,
+      y: 0.33,
+      value: 2.31
+    },
+    {
+      name: "Cz",
+      x: 0.5,
+      y: 0.5,
+      value: 2.22
+    },
+    {
+      name: "Pz",
+      x: 0.5,
+      y: 0.66,
+      value: 2.05
+    },
+    {
+      name: "F7",
+      x: 0.175,
+      y: 0.266,
+      value: 2.26
+    },
+    {
+      name: "F3",
+      x: 0.336,
+      y: 0.300,
+      value: 2.13
+    },
+    {
+      name: "F4",
+      x: 0.664,
+      y: 0.300,
+      value: 2.12
+    },
+    {
+      name: "F8",
+      x: 0.825,
+      y: 0.266,
+      value: 2.06
+    },
+    {
+      name: "T3",
+      x: 0.1,
+      y: 0.5,
+      value: 2.08
+    },
+    {
+      name: "C3",
+      x: 0.3,
+      y: 0.5,
+      value: 2.00
+    },
+    {
+      name: "C4",
+      x: 0.7,
+      y: 0.5,
+      value: 2.19
+    },
+    {
+      name: "T4",
+      x: 0.9,
+      y: 0.5,
+      value: 2.17
+    },
+    {
+      name: "T5",
+      x: 0.175,
+      y: 0.734,
+      value: 2.12
+    },
+    {
+      name: "P3",
+      x: 0.336,
+      y: 0.700,
+      value: 2.03
+    },
+    {
+      name: "O1",
+      x: 0.375,
+      y: 0.875,
+      value: 2.13
+    },
+    {
+      name: "P4",
+      x: 0.664,
+      y: 0.700,
+      value: 2.15
+    },
+    {
+      name: "T6",
+      x: 0.825,
+      y: 0.734,
+      value: 2.17
+    },
+    {
+      name: "O2",
+      x: 0.625,
+      y: 0.875,
+      value: 2.15
+    }
+  ]
 
-    console.time('map')
-    nnInter.computeMap()
-    console.timeEnd('map')
+  var w = 256;
+  var h = 256;
+
+
+  var seeds = montage10_20.map(function(s){
+    return {
+      x: s.x * w,
+      y: s.y * h,
+      value: Math.random() * 255//(s.value - 2) * 600
+    }
+  })
+
+  var nnInter = new natninter.Interpolator();
+  nnInter.setOutputSize(w, h);
+  nnInter.addSeeds( seeds );
+
+  console.time('map')
+  nnInter.computeMap();
+  console.timeEnd('map')
+
+
+  var output = nnInter.generate();
+
+  console.log( output );
+
+
+  // creating a canvas
+  canvas = document.createElement("canvas");
+  canvas.style = "image-rendering: pixelated;";
+  ctx = canvas.getContext('2d');
+
+  // not sure this is useful since the style is "pixelated"
+  // (does not seem to well super well with Firefox)
+  ctx.imageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = false;
+  ctx.webkitImageSmoothingEnabled = false;
+  ctx.ctxmsImageSmoothingEnabled = false;
+
+  // resizing the canvas
+  canvas.width = w;
+  canvas.height = h;
+
+  var canvasImageData = ctx.getImageData(0, 0, w, h);
+  var canvasImageDataArray = canvasImageData.data;
+
+
+  for(var i=0; i<output._data.length; i++){
+    var index1D = i*4;
+    var val = Math.floor(output._data[i]);
+    canvasImageDataArray[index1D] = val;
+    canvasImageDataArray[index1D + 1] = val;
+    canvasImageDataArray[index1D + 2] = val;
+    canvasImageDataArray[index1D + 3] = 255;
+  }
+
+
+  console.log( canvasImageDataArray );
+  ctx.putImageData(canvasImageData, 0, 0);
+
+  document.getElementById("canvasParent").appendChild(canvas);
+
   </script>
 
 </body>

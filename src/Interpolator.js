@@ -97,7 +97,7 @@ class Interpolator {
           var stolenAreaData = this._seedCellCollection.getStolenAreaInfo( pixelCellCollection )
           this._samplingMap[ index1D ] = stolenAreaData;
         }else{
-          this._samplingMap[ index1D ] = {seedIndex: seedIndex, stolenRatio: 1};
+          this._samplingMap[ index1D ] = [{seedIndex: seedIndex, stolenRatio: 1}];
         }
       }
     }
@@ -165,6 +165,37 @@ class Interpolator {
     return pixelCellCollection;
   }
 
+
+  /**
+  * Generate the output image as a floating points 1D array representing a 2D (1band)
+  * image.
+  *
+  */
+  generate(){
+    var l = this._output.width * this._output.height;
+    var outImg = new Float32Array( l );
+    var seeds = this._seeds;
+    var map = this._samplingMap;
+
+    for(var i=0; i<l; i++){
+      var pixelMap = map[i];
+      var sum = 0;
+
+      for(var m=0; m<pixelMap.length; m++){
+        sum += (pixelMap[m].stolenRatio *  seeds[ pixelMap[m].seedIndex ].value  )
+      }
+
+      outImg[i] = sum;
+    }
+
+    return {
+      _metadata: {
+        width: this._output.width,
+        height: this._output.height
+      },
+      _data: outImg
+    }
+  }
 
 
 }

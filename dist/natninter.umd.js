@@ -3702,6 +3702,14 @@ class ConvexPolygon {
     return this._hull.map(function(p){ return [p[0], p[1]]});
   }
 
+
+  /**
+  * Compare with another polygon and tells if it's the same.
+  * Predicate: polygons are convex + the first point of the list starts at noon and
+  * the following are going clock-wise.
+  * @param {ConvexPolygon} otherPolygon - another polygon
+  * @return {Boolean} true is the same, false if not
+  */
   isSame( otherPolygon ){
     var eps = 0.0001;
     var otherHull = otherPolygon.getHull();
@@ -3710,9 +3718,6 @@ class ConvexPolygon {
       return false;
 
     for(var i=0; i<otherHull.length; i++){
-      //if( (otherHull[i][0]!==this._hull[i][0] || otherHull[i][1]!==this._hull[i][1]))
-      //  return false;
-
       if( (Math.abs(otherHull[i][0] - this._hull[i][0])>eps || Math.abs(otherHull[i][1] - this._hull[i][1]) > eps ))
         return false;
     }
@@ -4010,7 +4015,7 @@ class Interpolator {
           var stolenAreaData = this._seedCellCollection.getStolenAreaInfo( pixelCellCollection );
           this._samplingMap[ index1D ] = stolenAreaData;
         }else{
-          this._samplingMap[ index1D ] = {seedIndex: seedIndex, stolenRatio: 1};
+          this._samplingMap[ index1D ] = [{seedIndex: seedIndex, stolenRatio: 1}];
         }
       }
     }
@@ -4076,6 +4081,37 @@ class Interpolator {
     return pixelCellCollection;
   }
 
+
+  /**
+  * Generate the output image as a floating points 1D array representing a 2D (1band)
+  * image.
+  *
+  */
+  generate(){
+    var l = this._output.width * this._output.height;
+    var outImg = new Float32Array( l );
+    var seeds = this._seeds;
+    var map = this._samplingMap;
+
+    for(var i=0; i<l; i++){
+      var pixelMap = map[i];
+      var sum = 0;
+
+      for(var m=0; m<pixelMap.length; m++){
+        sum += (pixelMap[m].stolenRatio *  seeds[ pixelMap[m].seedIndex ].value  );
+      }
+
+      outImg[i] = sum;
+    }
+
+    return {
+      _metadata: {
+        width: this._output.width,
+        height: this._output.height
+      },
+      _data: outImg
+    }
+  }
 
 
 }

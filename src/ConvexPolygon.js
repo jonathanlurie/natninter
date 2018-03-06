@@ -196,6 +196,14 @@ class ConvexPolygon {
     return this._hull.map(function(p){ return [p[0], p[1]]});
   }
 
+
+  /**
+  * Compare with another polygon and tells if it's the same.
+  * Predicate: polygons are convex + the first point of the list starts at noon and
+  * the following are going clock-wise.
+  * @param {ConvexPolygon} otherPolygon - another polygon
+  * @return {Boolean} true is the same, false if not
+  */
   isSame( otherPolygon ){
     var eps = 0.0001;
     var otherHull = otherPolygon.getHull();
@@ -204,9 +212,6 @@ class ConvexPolygon {
       return false;
 
     for(var i=0; i<otherHull.length; i++){
-      //if( (otherHull[i][0]!==this._hull[i][0] || otherHull[i][1]!==this._hull[i][1]))
-      //  return false;
-
       if( (Math.abs(otherHull[i][0] - this._hull[i][0])>eps || Math.abs(otherHull[i][1] - this._hull[i][1]) > eps ))
         return false;
     }
