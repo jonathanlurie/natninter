@@ -200,9 +200,11 @@
   var canvasImageDataArray = canvasImageData.data;
 
 
+
   for(var i=0; i<output._data.length; i++){
     var index1D = i*4;
-    var val = Math.floor(output._data[i]);
+    //var val = Math.floor(output._data[i]);
+    var val = Math.floor(output._data[i]/10)*10;
     canvasImageDataArray[index1D] = val;
     canvasImageDataArray[index1D + 1] = val;
     canvasImageDataArray[index1D + 2] = val;

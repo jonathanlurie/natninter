@@ -1,4 +1,6 @@
 import AreaPolygon from "area-polygon";
+import PointInPolygon from 'point-in-polygon';
+
 //import greinerHormann from 'greiner-hormann';
 import PolyBool from 'polybooljs';
 import { VectorTools } from './VectorTools.js'
@@ -165,8 +167,7 @@ class ConvexPolygon {
   }
 
 
-  getIntersection( anotherPolygon ){
-    // TODO the intersection gives the input
+  getIntersection_OLD_BUT_OK( anotherPolygon ){
     var polyA = {
                 regions: [
                   this.get2DHull()
@@ -185,6 +186,63 @@ class ConvexPolygon {
     var interPolygon = new ConvexPolygon( vertices.regions[0] );
     return interPolygon;
   }
+
+
+  /**
+  * This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
+  * valid way to find the intersection polygon between 2 convex polygons!
+  * For this context only, we believe it's much faster tho.
+  */
+  getIntersection( anotherPolygon ){
+    var h1 = this.getHull();
+    var h2 = anotherPolygon.getHull();
+    var eps = 0.0001;
+
+    // step 1: get the intersection points between the edges of this poly and
+    // the edges of anotherPolygon.
+    var crossingPoints = [];
+    var nbVerticesP1 = h1.length;
+    var nbVerticesP2 = h2.length;
+
+    // for each vertex of h1 ...
+    for(var i=0; i<nbVerticesP1; i++){
+      var u1 = h1[ i ];
+      var u2 = h1[ (i+1)%nbVerticesP1 ];
+
+      // for each vertex of h2 ...
+      for(var j=0; j<nbVerticesP2; j++){
+        var v1 = h2[ j ];
+        var v2 = h2[ (j+1)%nbVerticesP2 ];
+
+        var intersectPoint = VectorTools.vector2DCrossing(u1, u2, v1, v2);
+        if( intersectPoint )
+          crossingPoints.push( intersectPoint );
+
+        // TODO: test if each vertex is no ON a edge.
+        // var d = VectorTools.pointToSegmentDistance(p, u1, u2);
+      }
+    }
+
+    // step 2: all the vertices of h1 that are inside h2 have to be part of the list
+    // and all the vertices of h2 that are inside h1 too.
+    for(var i=0; i<nbVerticesP1; i++){
+      var inside = PointInPolygon( h1[ i ], h2);
+      if( inside )
+        crossingPoints.push( h1[ i ] );
+    }
+
+    for(var i=0; i<nbVerticesP2; i++){
+      var inside = PointInPolygon( h2[ i ], h1);
+      if( inside )
+        crossingPoints.push( h2[ i ] );
+    }
+
+    var interPolygon = new ConvexPolygon( crossingPoints );
+    return interPolygon;
+  }
+
+
+
 
 
   getHull(){

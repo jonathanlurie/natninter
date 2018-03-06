@@ -140,6 +140,70 @@ class VectorTools {
 
 
 
+  /**
+  * Checks if the vector u crosses the vector v. The vector u goes from point u1
+  * to point u2 and vector v goes from point v1 to point v2.
+  * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
+  */
+  static vector2DCrossing(u1, u2, v1, v2){
+    var meet = null;
+    var s1x = u2[0] - u1[0];
+    var s1y = u2[1] - u1[1];
+    var s2x = v2[0] - v1[0];
+    var s2y = v2[1] - v1[1];
+
+    var s = (-s1y * (u1[0] - v1[0]) + s1x * (u1[1] - v1[1])) / (-s2x * s1y + s1x * s2y);
+    var t = ( s2x * (u1[1] - v1[1]) - s2y * (u1[0] - v1[0])) / (-s2x * s1y + s1x * s2y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+    {
+      meet = [
+        u1[0] + (t * s1x),
+        u1[1] + (t * s1y)
+      ]
+    }
+
+    return meet;
+  }
+
+
+  /**
+  * Get the distance between a segment and a point
+  * Stolen from SO http://bit.ly/2oQG3yX
+  */
+  static pointToSegmentDistance(p, u1, u2) {
+    var A = p[0] - u1[0];
+    var B = p[1] - u1[1];
+    var C = u2[0] - u1[0];
+    var D = u2[1] - u1[1];
+
+    var dot = A * C + B * D;
+    var lenSq = C * C + D * D;
+    var param = -1;
+    if (lenSq != 0) //in case of 0 length line
+        param = dot / lenSq;
+
+    var xx, yy;
+
+    if (param < 0) {
+      xx = u1[0];
+      yy = u1[1];
+    }
+    else if (param > 1) {
+      xx = u2[0];
+      yy = u2[1];
+    }
+    else {
+      xx = u1[0] + param * C;
+      yy = u1[1] + param * D;
+    }
+
+    var dx = p[0] - xx;
+    var dy = p[1] - yy;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+
 }
 
 export { VectorTools };

@@ -1759,6 +1759,25 @@ function normalize(point) {
     return point
 }
 
+var pointInPolygon = function (point, vs) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+    
+    var x = point[0], y = point[1];
+    
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+};
+
 // (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
 // MIT License
 // Project Home: https://github.com/voidqk/polybooljs
@@ -3508,6 +3527,70 @@ class VectorTools {
 
 
 
+  /**
+  * Checks if the vector u crosses the vector v. The vector u goes from point u1
+  * to point u2 and vector v goes from point v1 to point v2.
+  * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
+  */
+  static vector2DCrossing(u1, u2, v1, v2){
+    var meet = null;
+    var s1x = u2[0] - u1[0];
+    var s1y = u2[1] - u1[1];
+    var s2x = v2[0] - v1[0];
+    var s2y = v2[1] - v1[1];
+
+    var s = (-s1y * (u1[0] - v1[0]) + s1x * (u1[1] - v1[1])) / (-s2x * s1y + s1x * s2y);
+    var t = ( s2x * (u1[1] - v1[1]) - s2y * (u1[0] - v1[0])) / (-s2x * s1y + s1x * s2y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+    {
+      meet = [
+        u1[0] + (t * s1x),
+        u1[1] + (t * s1y)
+      ];
+    }
+
+    return meet;
+  }
+
+
+  /**
+  * Get the distance between a segment and a point
+  * Stolen from SO http://bit.ly/2oQG3yX
+  */
+  static pointToSegmentDistance(p, u1, u2) {
+    var A = p[0] - u1[0];
+    var B = p[1] - u1[1];
+    var C = u2[0] - u1[0];
+    var D = u2[1] - u1[1];
+
+    var dot = A * C + B * D;
+    var lenSq = C * C + D * D;
+    var param = -1;
+    if (lenSq != 0) //in case of 0 length line
+        param = dot / lenSq;
+
+    var xx, yy;
+
+    if (param < 0) {
+      xx = u1[0];
+      yy = u1[1];
+    }
+    else if (param > 1) {
+      xx = u2[0];
+      yy = u2[1];
+    }
+    else {
+      xx = u1[0] + param * C;
+      yy = u1[1] + param * D;
+    }
+
+    var dx = p[0] - xx;
+    var dy = p[1] - yy;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+
 }
 
 class ConvexPolygon {
@@ -3671,8 +3754,7 @@ class ConvexPolygon {
   }
 
 
-  getIntersection( anotherPolygon ){
-    // TODO the intersection gives the input
+  getIntersection_OLD_BUT_OK( anotherPolygon ){
     var polyA = {
                 regions: [
                   this.get2DHull()
@@ -3691,6 +3773,62 @@ class ConvexPolygon {
     var interPolygon = new ConvexPolygon( vertices.regions[0] );
     return interPolygon;
   }
+
+
+  /**
+  * This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
+  * valid way to find the intersection polygon between 2 convex polygons!
+  * For this context only, we believe it's much faster tho.
+  */
+  getIntersection( anotherPolygon ){
+    var h1 = this.getHull();
+    var h2 = anotherPolygon.getHull();
+
+    // step 1: get the intersection points between the edges of this poly and
+    // the edges of anotherPolygon.
+    var crossingPoints = [];
+    var nbVerticesP1 = h1.length;
+    var nbVerticesP2 = h2.length;
+
+    // for each vertex of h1 ...
+    for(var i=0; i<nbVerticesP1; i++){
+      var u1 = h1[ i ];
+      var u2 = h1[ (i+1)%nbVerticesP1 ];
+
+      // for each vertex of h2 ...
+      for(var j=0; j<nbVerticesP2; j++){
+        var v1 = h2[ j ];
+        var v2 = h2[ (j+1)%nbVerticesP2 ];
+
+        var intersectPoint = VectorTools.vector2DCrossing(u1, u2, v1, v2);
+        if( intersectPoint )
+          crossingPoints.push( intersectPoint );
+
+        // TODO: test if each vertex is no ON a edge.
+        // var d = VectorTools.pointToSegmentDistance(p, u1, u2);
+      }
+    }
+
+    // step 2: all the vertices of h1 that are inside h2 have to be part of the list
+    // and all the vertices of h2 that are inside h1 too.
+    for(var i=0; i<nbVerticesP1; i++){
+      var inside = pointInPolygon( h1[ i ], h2);
+      if( inside )
+        crossingPoints.push( h1[ i ] );
+    }
+
+    for(var i=0; i<nbVerticesP2; i++){
+      var inside = pointInPolygon( h2[ i ], h1);
+      if( inside )
+        crossingPoints.push( h2[ i ] );
+    }
+
+    var interPolygon = new ConvexPolygon( crossingPoints );
+    return interPolygon;
+  }
+
+
+
 
 
   getHull(){
@@ -3784,7 +3922,15 @@ class Cell {
 
 
   intersectWithCell( anotherCell ){
-    return this._polygon.getIntersection( anotherCell.getPolygon() );
+    var pOld = this._polygon.getIntersection_OLD_BUT_OK( anotherCell.getPolygon() );
+    var pNew = this._polygon.getIntersection( anotherCell.getPolygon() );
+
+    if( pOld._hull.length !== pNew._hull.length ){
+      console.log( 'DIF' );
+    }
+
+    return pOld;
+
   }
 
 
@@ -4117,6 +4263,7 @@ class Interpolator {
 }
 
 exports.Interpolator = Interpolator;
+exports.VectorTools = VectorTools;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

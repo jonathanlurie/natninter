@@ -54,7 +54,15 @@ class Cell {
 
 
   intersectWithCell( anotherCell ){
-    return this._polygon.getIntersection( anotherCell.getPolygon() );
+    var pOld = this._polygon.getIntersection_OLD_BUT_OK( anotherCell.getPolygon() );
+    var pNew = this._polygon.getIntersection( anotherCell.getPolygon() );
+
+    if( pOld._hull.length !== pNew._hull.length ){
+      console.log( 'DIF' );
+    }
+
+    return pOld;
+
   }
 
 
