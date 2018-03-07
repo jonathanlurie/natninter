@@ -3435,7 +3435,6 @@ class VectorTools {
     }
 
     return sum;
-
   }
 
 
@@ -3687,44 +3686,37 @@ class ConvexPolygon {
 
 
   static orderPolygonPoints( polygonPoints ){
-    var polygonPoints3D = polygonPoints.map(function(p){return [p[0], p[1], 0]});
-    var nbVertice = polygonPoints3D.length;
-    var center = ConvexPolygon.getPolygonCenter( polygonPoints3D );
-    //console.log( center );
-
-    // create normalized vectors from center to each vertex of the polygon
-    var normalizedRays = [];
-    for(var v=0; v<nbVertice; v++){
-      var currentRay = [
-        center[0] - polygonPoints3D[v][0],
-        center[1] - polygonPoints3D[v][1],
-        center[2] - polygonPoints3D[v][2]
-      ];
-
-      normalizedRays.push(VectorTools.normalize(currentRay));
-    }
+    var nbVertice = polygonPoints.length;
+    var center = ConvexPolygon.getPolygonCenter( polygonPoints );
 
     // for each, we have .vertice (a [x, y, z] array) and .angle (rad angle to planePolygonWithAngles[0])
-    var planePolygonWithAngles = [];
+    var planePolygonWithAngles = new Array( nbVertice );
     var verticalRay = [0, 1, 0];
 
-    // find the angle of each towards the first vertex
-    //planePolygonWithAngles.push({vertex: polygonPoints3D[0], angle: 0})
-
-    //for(var v=1; v<nbVertice; v++){
     for(var v=0; v<nbVertice; v++){
-      var cos = VectorTools.dotProduct(verticalRay, normalizedRays[v]);
+      var currentRay = [
+        center[0] - polygonPoints[v][0],
+        center[1] - polygonPoints[v][1],
+        0
+      ];
+
+      var currentRayNormalized = VectorTools.normalize(currentRay);
+      var cos = VectorTools.dotProduct(verticalRay, currentRayNormalized);
       var angle = Math.acos(cos);
-      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, normalizedRays[v], false);
+      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized, false);
       var planeNormal = [0, 0, 1];
       var angleSign = VectorTools.dotProduct(currentPolygonNormal, planeNormal)>0? 1:-1;
       angle *= angleSign;
 
+      // having only positive angles is a trick for ordering the vertices of a polygon
+      // always the same way: first vertex of the list is at noon or the one just after
+      // noon in a clock-wise direction. Then, all the other vertices are follwing in CW.
+      // Then, it's easy to figure if 2 polygons are the same.
       if( angle < 0 ){
         angle = Math.PI + ( Math.PI + angle );
       }
 
-      planePolygonWithAngles.push({vertex: polygonPoints3D[v], angle: angle});
+      planePolygonWithAngles[v] = {vertex: polygonPoints[v], angle: angle};
     }
 
     // sort vertices based on their angle to [0]
@@ -3738,9 +3730,6 @@ class ConvexPolygon {
       orderedVertice.push(planePolygonWithAngles[v].vertex);
     }
 
-    // attribute the ordered array to this.planePolygo
-    //newPolyPoints = newPolyPoints.map(function(p){return [p[0], p[1]]});
-    orderedVertice = orderedVertice.map(function(p){return [p[0], p[1]]});
     return orderedVertice;
   }
 
@@ -3783,10 +3772,10 @@ class ConvexPolygon {
   getIntersection( anotherPolygon ){
     var h1 = this.getHull();
     var h2 = anotherPolygon.getHull();
+    var eps = 0.0001;
 
-    // step 1: get the intersection points between the edges of this poly and
-    // the edges of anotherPolygon.
-    var crossingPoints = [];
+
+    var intersecVectices = [];
     var nbVerticesP1 = h1.length;
     var nbVerticesP2 = h2.length;
 
@@ -3795,35 +3784,52 @@ class ConvexPolygon {
       var u1 = h1[ i ];
       var u2 = h1[ (i+1)%nbVerticesP1 ];
 
+      // case 1: all the vertices of h1 that are inside h2 have to be part of the list
+      var inside = pointInPolygon( h1[ i ], h2);
+      if( inside )
+        intersecVectices.push( h1[ i ] );
+
       // for each vertex of h2 ...
       for(var j=0; j<nbVerticesP2; j++){
+        // case 1 bis: all the vertices of h2 that are inside h1 have to be part of the list.
+        // no need to run that every i loop
+        if( i === 0 ){
+          var inside = pointInPolygon( h2[ j ], h1);
+          if( inside )
+            intersecVectices.push( h2[ j ] );
+        }
+
         var v1 = h2[ j ];
         var v2 = h2[ (j+1)%nbVerticesP2 ];
 
+        // case 2: get the intersection points between the edges of this poly and
+        // the edges of anotherPolygon.
         var intersectPoint = VectorTools.vector2DCrossing(u1, u2, v1, v2);
-        if( intersectPoint )
-          crossingPoints.push( intersectPoint );
+        if( intersectPoint ){
+          intersecVectices.push( intersectPoint );
+        }
 
-        // TODO: test if each vertex is no ON a edge.
-        // var d = VectorTools.pointToSegmentDistance(p, u1, u2);
+        // case 3: a vertex of a polygon is ON/ALONG an edge of the other polygon
+        // note: this case can seem like "ho, that's an unfortunate minor case" but in the context
+        // of voronoi cell replacement, this happens A LOT!
+
+        // distance between the point v1 (that belongs to h2) and the edge u1u2 (that belongs to h1)
+        var dv1u = VectorTools.pointToSegmentDistance(v1, u1, u2);
+        if( dv1u < eps ){
+          intersecVectices.push( v1 );
+        }
+
+        // distance between the point u1 (that belongs to h1) and the edge v1v2 (that belongs to h2)
+        var du1v = VectorTools.pointToSegmentDistance(u1, v1, v2);
+        if( du1v < eps ){
+          intersecVectices.push( u1 );
+        }
+
+
       }
     }
 
-    // step 2: all the vertices of h1 that are inside h2 have to be part of the list
-    // and all the vertices of h2 that are inside h1 too.
-    for(var i=0; i<nbVerticesP1; i++){
-      var inside = pointInPolygon( h1[ i ], h2);
-      if( inside )
-        crossingPoints.push( h1[ i ] );
-    }
-
-    for(var i=0; i<nbVerticesP2; i++){
-      var inside = pointInPolygon( h2[ i ], h1);
-      if( inside )
-        crossingPoints.push( h2[ i ] );
-    }
-
-    var interPolygon = new ConvexPolygon( crossingPoints );
+    var interPolygon = new ConvexPolygon( intersecVectices );
     return interPolygon;
   }
 
@@ -3879,7 +3885,7 @@ class Cell {
   * @param {Array}
   */
   constructor( contourPoints, seed ){
-    this._hash = Cell.getHash( seed.x, seed.y );
+    this._hash = Cell.genarateHash( seed.x, seed.y );
     this._polygon= new ConvexPolygon( contourPoints );
     this._seed = seed;
     this._isValid = (this._polygon.isValid() && !!this._hash);
@@ -3907,11 +3913,12 @@ class Cell {
 
 
   // get a unique hash from 2 floats
-  static getHash( i1, i2 ){
-    //return md5( new Float32Array([f1, f2]) );
-    var base = 16;
-    var hash = (i1 < base ? "0" : '') + i1.toString(16) +
-               (i2 < base ? "0" : '') + i2.toString(16);
+  static genarateHash( i1, i2 ){
+    //var hash = (i1 < base ? "0" : '') + i1.toString(16) +
+    //           (i2 < base ? "0" : '') + i2.toString(16)
+
+    //
+    var hash = i1.toString() + i2.toString();
     return hash;
   }
 
@@ -3922,15 +3929,10 @@ class Cell {
 
 
   intersectWithCell( anotherCell ){
-    var pOld = this._polygon.getIntersection_OLD_BUT_OK( anotherCell.getPolygon() );
-    var pNew = this._polygon.getIntersection( anotherCell.getPolygon() );
+    //var p = this._polygon.getIntersection_OLD_BUT_OK( anotherCell.getPolygon() );
+    var p = this._polygon.getIntersection( anotherCell.getPolygon() );
 
-    if( pOld._hull.length !== pNew._hull.length ){
-      console.log( 'DIF' );
-    }
-
-    return pOld;
-
+    return p;
   }
 
 

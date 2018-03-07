@@ -48,7 +48,6 @@ class VectorTools {
     }
 
     return sum;
-
   }
 
 
