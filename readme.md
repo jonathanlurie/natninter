@@ -4,6 +4,9 @@ For Node and browsers.
 Some info [about nni](http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-analyst-toolbox/how-natural-neighbor-works.htm).  
 The *nii* method is used to interpolate sparse data point along a regular 2D grid surface. This methods work with Voronoi cells and area stilling and is said to give results that are close to the "real solution". The only issue with this method is that it's very computational, and thus, quite slow.
 
+On the left: nni, on the right: same but with using some threshold at rendering.  
+![](nni.png)
+
 ## Concept
 Sparse point interpolations need:  
 - a set of sparse points. Here, we will call them *seeds*
@@ -56,6 +59,7 @@ The `output` is actually an object of the form:
 Where `_data` is a 1D array of length `height`x`width` arrange in a row major way.
 
 ## Examples
+[A regular example](http://me.jonathanlurie.fr/natninter/examples/browser.html) and [A wavy example](http://me.jonathanlurie.fr/natninter/examples/browserwaves.html)  
 See the folder `examples` for a Node and a browser example.
 
 ## Generate a map with and save it locally
