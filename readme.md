@@ -62,7 +62,7 @@ Where `_data` is a 1D array of length `height`x`width` arrange in a row major wa
 [A regular example](http://me.jonathanlurie.fr/natninter/examples/browser.html) and [A wavy example](http://me.jonathanlurie.fr/natninter/examples/browserwaves.html)  
 See the folder `examples` for a Node and a browser example.
 
-## Generate a map with and save it locally
+## Generate a map and save it locally
 `natninter` comes with a *node* executable to generate a samplig-map file in JSON format. In a terminal, find the executable `generatemap.js`, located in the `bin` folder. Then:
 
 ```bash
