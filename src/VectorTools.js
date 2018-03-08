@@ -1,22 +1,18 @@
 
-
+/**
+ * VectorTools is not instanciable and provide some static functions for
+ * computing things about vectors.
+ */
 class VectorTools {
 
-
-
-
-  /*
-    performs a cross product between v1 and v2.
-    args:
-      v1: Array[3] - vector #1
-      v2: Array[3] - vector #2
-      normalize: boolean - normalize the output vector when true
-
-    return:
-      Array[3] - the vctor result of the cross product
-  */
-  static crossProduct(v1, v2, normalize){
-
+  /**
+   * performs a cross product between v1 and v2.
+   * @param  {Array} v1 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
+   * @param  {Array} v2 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
+   * @param  {Boolean} normalize - will force normalization of the output vector if true (default: false)
+   * @return {Array} a vector [x, y, z], result of the cross product
+   */
+  static crossProduct(v1, v2, normalize=false){
     var normalVector = [
         v1[1] * v2[2] - v1[2] * v2[1],
         (v1[0] * v2[2] - v1[2] * v2[0] ) * (-1),
@@ -30,11 +26,14 @@ class VectorTools {
   }
 
 
-  /*
-    compute the dot product between v1 and v2.
-    Note: v1 and v2 must be normalize so that the dot product is also
-    the cosine of the angle between v1 and v2.
-  */
+  /**
+   * Perform the dot product of two vectors. They need to be of the same dimension
+   * but they can be 2D, 3D or aother.
+   * Note: If v1 and v2 are normalize, the dot product is also the cosine
+   * @param  {Array} v1  - a vector [x, y] or [x, y, z]
+   * @param  {Array} v2 - a vector [x, y] or [x, y, z]
+   * @return {Number} the dot product
+   */
   static dotProduct(v1, v2){
     if(v1.length != v2.length){
       console.log("ERROR: v1 and v2 must be the same size to compute a dot product");
@@ -51,13 +50,10 @@ class VectorTools {
   }
 
 
-  /*
-    Return a normalized vector from v (does not replace v).
-    args:
-      v: Array[3] - vector to normalize
-
-    return:
-      Array[3] - a normalized vector
+ /**
+  * Normalizes a 3D vector
+  * @param  {Array} v - 3D vector to normalize
+  * @return {Array} the normalized 3D vector
   */
   static normalize(v){
     var n = VectorTools.getNorm(v);
@@ -66,8 +62,10 @@ class VectorTools {
   }
 
 
-  /*
-    return the norm (length) of a vector [x, y, z]
+ /**
+  * return the norm (length) of a vector [x, y, z]
+  * @param  {Array} v - 3D vector to get the norm of
+  * @return {Number} the norm
   */
   static getNorm(v){
     return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
@@ -76,7 +74,7 @@ class VectorTools {
 
 
   /*
-    rotate the vector v using the rotation matrix m.
+
     Args:
       v: array - [x, y, z]
       m: array[array] -
@@ -89,6 +87,13 @@ class VectorTools {
        dx + ey + fz,
        gx + hy + iz]
   */
+
+ /**
+  * rotate the vector v using the rotation matrix m.
+  * @param  {Array} v - 3D vector
+  * @param  {Array} m  - matrix [[a, b, c], [d, e, f], [g, h, i]]
+  * @return {Array} the rotated vector [ax + by + cz, dx + ey + fz, gx + hy + iz]
+  */
   static rotate(v, m){
     var vRot = [
       v[0]*m[0][0] + v[1]*m[0][1] + v[2]*m[0][2],
@@ -100,15 +105,17 @@ class VectorTools {
   }
 
 
-  /*
-    compute the angle p1p2p3 in radians.
-    Does not give the sign, just absolute angle!
-    args:
-      p1, p2, p3: array [x, y, z] - 3D coordinate of each point
-  */
+  /**
+   * Compute the angle p1p2p3 in radians.
+   * Does not give the sign, just absolute angle!
+   * @param  {Array} p1 - a 3D point [x, y, z]
+   * @param  {Array} p2 - a 3D point [x, y, z]
+   * @param  {Array} p3 - a 3D point [x, y, z]
+   * @return {Number}    [description]
+   */
   static getAnglePoints(p1, p2, p3){
 
-    //  the configuration is somthing like that:
+    //  the configuration is like that:
     //
     //  p1-----p2
     //        /
@@ -139,11 +146,16 @@ class VectorTools {
 
 
 
-  /**
-  * Checks if the vector u crosses the vector v. The vector u goes from point u1
-  * to point u2 and vector v goes from point v1 to point v2.
-  * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
-  */
+   /**
+   * Checks if the 2D vector u crosses the 2D vector v. The vector u goes from point u1
+   * to point u2 and vector v goes from point v1 to point v2.
+   * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
+   * @param  {Array} u1 - first point of the u vector as [x, y]
+   * @param  {Array} u2 - second point of the u vector as [x, y]
+   * @param  {Array} v1 - first point of the v vector as [x, y]
+   * @param  {Array} v2 - second point of the v vector as [x, y]
+   * @return {Array|null} crossing point as [x, y] or null if vector don't cross.
+   */
   static vector2DCrossing(u1, u2, v1, v2){
     var meet = null;
     var s1x = u2[0] - u1[0];
@@ -167,8 +179,12 @@ class VectorTools {
 
 
   /**
-  * Get the distance between a segment and a point
+  * Get the distance between the 2D point p and a 2D segment u (defined by its points u1 and u2)
   * Stolen from SO http://bit.ly/2oQG3yX
+  * @param  {Array} p  - a point as [x, y]
+  * @param  {Array} u1 - first point of the u vector as [x, y]
+  * @param  {Array} u2 - second point of the u vector as [x, y]
+  * @return {Number} the distance
   */
   static pointToSegmentDistance(p, u1, u2) {
     var A = p[0] - u1[0];

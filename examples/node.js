@@ -1,8 +1,7 @@
-const natninter = require("../dist/natninter.cjs.js");
+const natninter = require("../dist/natninter.js");
 
-var foo = new natninter.Foo(20, 30);
+var nnInter = new natninter.Interpolator();
 
-// do something with foo
-foo.printAnAttribute();
-foo.setAnAttribute(34)
-foo.printAnAttribute();
+console.log( nnInter );
+
+// then follow the example of 'browser.html'

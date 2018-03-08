@@ -16,26 +16,22 @@
 </head>
 <body>
   <!-- importing the automatically build module -->
-  <script src="../dist/natninter.umd.js"></script>
-
-  <!-- The minified version is also accessible -->
-  <!-- <script src="../dist/natninter.umd.min.js"></script> -->
+  <script src="../dist/natninter.js"></script>
 
   <p>Open Javascript console.</p>
   <div id="canvasParent"></div>
 
   <script>
 
-    /*
     var seeds = [
-      {x: 20, y: 50,  value: 100 },
-      {x: 150, y: 30,  value: 30  },
-      {x: 250, y: 50, value: 120 },
-      {x: 200, y: 120, value: 50  },
-      {x: 100 , y: 150 , value: 150 },
-      {x: 150 , y: 90 , value: 10 },
+      {x: 100, y: 100,  value: Math.random()*255 },
+      {x: 300, y: 100,  value: Math.random()*255  },
+      {x: 300, y: 300, value: Math.random()*255 },
+      {x: 100, y: 300, value: Math.random()*255  },
+      {x: 200 , y: 200 , value: Math.random()*255 }
     ]
-    */
+
+
 
     var montage10_20 = [
     {
@@ -154,10 +150,10 @@
     }
   ]
 
-  var w = 256;
-  var h = 256;
+  var w = 400;
+  var h = 400;
 
-
+  /*
   var seeds = montage10_20.map(function(s){
     return {
       x: s.x * w,
@@ -165,17 +161,18 @@
       value: Math.random() * 255//(s.value - 2) * 600
     }
   })
+  */
 
   var nnInter = new natninter.Interpolator();
   nnInter.setOutputSize(w, h);
   nnInter.addSeeds( seeds );
 
   console.time('map')
-  nnInter.computeMap();
+  nnInter.generateMap();
   console.timeEnd('map')
+  //console.log( JSON.stringify( nnInter.getMap() ) );
 
-
-  var output = nnInter.generate();
+  var output = nnInter.generateImage();
 
   console.log( output );
 
@@ -187,7 +184,7 @@
 
   // not sure this is useful since the style is "pixelated"
   // (does not seem to well super well with Firefox)
-  ctx.imageSmoothingEnabled = false;
+  //ctx.imageSmoothingEnabled = false;
 
   // resizing the canvas
   canvas.width = w;
@@ -199,9 +196,10 @@
 
 
   for(var i=0; i<output._data.length; i++){
+
     var index1D = i*4;
     //var val = Math.floor(output._data[i]);
-    var val = Math.floor(output._data[i]/10)*10;
+    var val = Math.floor(output._data[i]/8)*8;
     canvasImageDataArray[index1D] = val;
     canvasImageDataArray[index1D + 1] = val;
     canvasImageDataArray[index1D + 2] = val;

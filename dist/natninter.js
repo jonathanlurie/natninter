@@ -1778,1632 +1778,20 @@ var pointInPolygon = function (point, vs) {
     return inside;
 };
 
-// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// used strictly for logging the processing of the algorithm... only useful if you intend on
-// looking under the covers (for pretty UI's or debugging)
-//
-
-function BuildLog(){
-	var my;
-	var nextSegmentId = 0;
-	var curVert = false;
-
-	function push(type, data){
-		my.list.push({
-			type: type,
-			data: data ? JSON.parse(JSON.stringify(data)) : void 0
-		});
-		return my;
-	}
-
-	my = {
-		list: [],
-		segmentId: function(){
-			return nextSegmentId++;
-		},
-		checkIntersection: function(seg1, seg2){
-			return push('check', { seg1: seg1, seg2: seg2 });
-		},
-		segmentChop: function(seg, end){
-			push('div_seg', { seg: seg, pt: end });
-			return push('chop', { seg: seg, pt: end });
-		},
-		statusRemove: function(seg){
-			return push('pop_seg', { seg: seg });
-		},
-		segmentUpdate: function(seg){
-			return push('seg_update', { seg: seg });
-		},
-		segmentNew: function(seg, primary){
-			return push('new_seg', { seg: seg, primary: primary });
-		},
-		segmentRemove: function(seg){
-			return push('rem_seg', { seg: seg });
-		},
-		tempStatus: function(seg, above, below){
-			return push('temp_status', { seg: seg, above: above, below: below });
-		},
-		rewind: function(seg){
-			return push('rewind', { seg: seg });
-		},
-		status: function(seg, above, below){
-			return push('status', { seg: seg, above: above, below: below });
-		},
-		vert: function(x){
-			if (x === curVert)
-				return my;
-			curVert = x;
-			return push('vert', { x: x });
-		},
-		log: function(data){
-			if (typeof data !== 'string')
-				data = JSON.stringify(data, false, '  ');
-			return push('log', { txt: data });
-		},
-		reset: function(){
-			return push('reset');
-		},
-		selected: function(segs){
-			return push('selected', { segs: segs });
-		},
-		chainStart: function(seg){
-			return push('chain_start', { seg: seg });
-		},
-		chainRemoveHead: function(index, pt){
-			return push('chain_rem_head', { index: index, pt: pt });
-		},
-		chainRemoveTail: function(index, pt){
-			return push('chain_rem_tail', { index: index, pt: pt });
-		},
-		chainNew: function(pt1, pt2){
-			return push('chain_new', { pt1: pt1, pt2: pt2 });
-		},
-		chainMatch: function(index){
-			return push('chain_match', { index: index });
-		},
-		chainClose: function(index){
-			return push('chain_close', { index: index });
-		},
-		chainAddHead: function(index, pt){
-			return push('chain_add_head', { index: index, pt: pt });
-		},
-		chainAddTail: function(index, pt){
-			return push('chain_add_tail', { index: index, pt: pt, });
-		},
-		chainConnect: function(index1, index2){
-			return push('chain_con', { index1: index1, index2: index2 });
-		},
-		chainReverse: function(index){
-			return push('chain_rev', { index: index });
-		},
-		chainJoin: function(index1, index2){
-			return push('chain_join', { index1: index1, index2: index2 });
-		},
-		done: function(){
-			return push('done');
-		}
-	};
-	return my;
-}
-
-var buildLog = BuildLog;
-
-// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// provides the raw computation functions that takes epsilon into account
-//
-// zero is defined to be between (-epsilon, epsilon) exclusive
-//
-
-function Epsilon(eps){
-	if (typeof eps !== 'number')
-		eps = 0.0000000001; // sane default? sure why not
-	var my = {
-		epsilon: function(v){
-			if (typeof v === 'number')
-				eps = v;
-			return eps;
-		},
-		pointAboveOrOnLine: function(pt, left, right){
-			var Ax = left[0];
-			var Ay = left[1];
-			var Bx = right[0];
-			var By = right[1];
-			var Cx = pt[0];
-			var Cy = pt[1];
-			return (Bx - Ax) * (Cy - Ay) - (By - Ay) * (Cx - Ax) >= -eps;
-		},
-		pointBetween: function(p, left, right){
-			// p must be collinear with left->right
-			// returns false if p == left, p == right, or left == right
-			var d_py_ly = p[1] - left[1];
-			var d_rx_lx = right[0] - left[0];
-			var d_px_lx = p[0] - left[0];
-			var d_ry_ly = right[1] - left[1];
-
-			var dot = d_px_lx * d_rx_lx + d_py_ly * d_ry_ly;
-			// if `dot` is 0, then `p` == `left` or `left` == `right` (reject)
-			// if `dot` is less than 0, then `p` is to the left of `left` (reject)
-			if (dot < eps)
-				return false;
-
-			var sqlen = d_rx_lx * d_rx_lx + d_ry_ly * d_ry_ly;
-			// if `dot` > `sqlen`, then `p` is to the right of `right` (reject)
-			// therefore, if `dot - sqlen` is greater than 0, then `p` is to the right of `right` (reject)
-			if (dot - sqlen > -eps)
-				return false;
-
-			return true;
-		},
-		pointsSameX: function(p1, p2){
-			return Math.abs(p1[0] - p2[0]) < eps;
-		},
-		pointsSameY: function(p1, p2){
-			return Math.abs(p1[1] - p2[1]) < eps;
-		},
-		pointsSame: function(p1, p2){
-			return my.pointsSameX(p1, p2) && my.pointsSameY(p1, p2);
-		},
-		pointsCompare: function(p1, p2){
-			// returns -1 if p1 is smaller, 1 if p2 is smaller, 0 if equal
-			if (my.pointsSameX(p1, p2))
-				return my.pointsSameY(p1, p2) ? 0 : (p1[1] < p2[1] ? -1 : 1);
-			return p1[0] < p2[0] ? -1 : 1;
-		},
-		pointsCollinear: function(pt1, pt2, pt3){
-			// does pt1->pt2->pt3 make a straight line?
-			// essentially this is just checking to see if the slope(pt1->pt2) === slope(pt2->pt3)
-			// if slopes are equal, then they must be collinear, because they share pt2
-			var dx1 = pt1[0] - pt2[0];
-			var dy1 = pt1[1] - pt2[1];
-			var dx2 = pt2[0] - pt3[0];
-			var dy2 = pt2[1] - pt3[1];
-			return Math.abs(dx1 * dy2 - dx2 * dy1) < eps;
-		},
-		linesIntersect: function(a0, a1, b0, b1){
-			// returns false if the lines are coincident (e.g., parallel or on top of each other)
-			//
-			// returns an object if the lines intersect:
-			//   {
-			//     pt: [x, y],    where the intersection point is at
-			//     alongA: where intersection point is along A,
-			//     alongB: where intersection point is along B
-			//   }
-			//
-			//  alongA and alongB will each be one of: -2, -1, 0, 1, 2
-			//
-			//  with the following meaning:
-			//
-			//    -2   intersection point is before segment's first point
-			//    -1   intersection point is directly on segment's first point
-			//     0   intersection point is between segment's first and second points (exclusive)
-			//     1   intersection point is directly on segment's second point
-			//     2   intersection point is after segment's second point
-			var adx = a1[0] - a0[0];
-			var ady = a1[1] - a0[1];
-			var bdx = b1[0] - b0[0];
-			var bdy = b1[1] - b0[1];
-
-			var axb = adx * bdy - ady * bdx;
-			if (Math.abs(axb) < eps)
-				return false; // lines are coincident
-
-			var dx = a0[0] - b0[0];
-			var dy = a0[1] - b0[1];
-
-			var A = (bdx * dy - bdy * dx) / axb;
-			var B = (adx * dy - ady * dx) / axb;
-
-			var ret = {
-				alongA: 0,
-				alongB: 0,
-				pt: [
-					a0[0] + A * adx,
-					a0[1] + A * ady
-				]
-			};
-
-			// categorize where intersection point is along A and B
-
-			if (A <= -eps)
-				ret.alongA = -2;
-			else if (A < eps)
-				ret.alongA = -1;
-			else if (A - 1 <= -eps)
-				ret.alongA = 0;
-			else if (A - 1 < eps)
-				ret.alongA = 1;
-			else
-				ret.alongA = 2;
-
-			if (B <= -eps)
-				ret.alongB = -2;
-			else if (B < eps)
-				ret.alongB = -1;
-			else if (B - 1 <= -eps)
-				ret.alongB = 0;
-			else if (B - 1 < eps)
-				ret.alongB = 1;
-			else
-				ret.alongB = 2;
-
-			return ret;
-		},
-		pointInsideRegion: function(pt, region){
-			var x = pt[0];
-			var y = pt[1];
-			var last_x = region[region.length - 1][0];
-			var last_y = region[region.length - 1][1];
-			var inside = false;
-			for (var i = 0; i < region.length; i++){
-				var curr_x = region[i][0];
-				var curr_y = region[i][1];
-
-				// if y is between curr_y and last_y, and
-				// x is to the right of the boundary created by the line
-				if ((curr_y - y > eps) != (last_y - y > eps) &&
-					(last_x - curr_x) * (y - curr_y) / (last_y - curr_y) + curr_x - x > eps)
-					inside = !inside;
-
-				last_x = curr_x;
-				last_y = curr_y;
-			}
-			return inside;
-		}
-	};
-	return my;
-}
-
-var epsilon = Epsilon;
-
-// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// simple linked list implementation that allows you to traverse down nodes and save positions
-//
-
-var LinkedList = {
-	create: function(){
-		var my = {
-			root: { root: true, next: null },
-			exists: function(node){
-				if (node === null || node === my.root)
-					return false;
-				return true;
-			},
-			isEmpty: function(){
-				return my.root.next === null;
-			},
-			getHead: function(){
-				return my.root.next;
-			},
-			insertBefore: function(node, check){
-				var last = my.root;
-				var here = my.root.next;
-				while (here !== null){
-					if (check(here)){
-						node.prev = here.prev;
-						node.next = here;
-						here.prev.next = node;
-						here.prev = node;
-						return;
-					}
-					last = here;
-					here = here.next;
-				}
-				last.next = node;
-				node.prev = last;
-				node.next = null;
-			},
-			findTransition: function(check){
-				var prev = my.root;
-				var here = my.root.next;
-				while (here !== null){
-					if (check(here))
-						break;
-					prev = here;
-					here = here.next;
-				}
-				return {
-					before: prev === my.root ? null : prev,
-					after: here,
-					insert: function(node){
-						node.prev = prev;
-						node.next = here;
-						prev.next = node;
-						if (here !== null)
-							here.prev = node;
-						return node;
-					}
-				};
-			}
-		};
-		return my;
-	},
-	node: function(data){
-		data.prev = null;
-		data.next = null;
-		data.remove = function(){
-			data.prev.next = data.next;
-			if (data.next)
-				data.next.prev = data.prev;
-			data.prev = null;
-			data.next = null;
-		};
-		return data;
-	}
-};
-
-var linkedList = LinkedList;
-
-// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// this is the core work-horse
-//
-
-
-
-function Intersecter(selfIntersection, eps, buildLog){
-	// selfIntersection is true/false depending on the phase of the overall algorithm
-
-	//
-	// segment creation
-	//
-
-	function segmentNew(start, end){
-		return {
-			id: buildLog ? buildLog.segmentId() : -1,
-			start: start,
-			end: end,
-			myFill: {
-				above: null, // is there fill above us?
-				below: null  // is there fill below us?
-			},
-			otherFill: null
-		};
-	}
-
-	function segmentCopy(start, end, seg){
-		return {
-			id: buildLog ? buildLog.segmentId() : -1,
-			start: start,
-			end: end,
-			myFill: {
-				above: seg.myFill.above,
-				below: seg.myFill.below
-			},
-			otherFill: null
-		};
-	}
-
-	//
-	// event logic
-	//
-
-	var event_root = linkedList.create();
-
-	function eventCompare(p1_isStart, p1_1, p1_2, p2_isStart, p2_1, p2_2){
-		// compare the selected points first
-		var comp = eps.pointsCompare(p1_1, p2_1);
-		if (comp !== 0)
-			return comp;
-		// the selected points are the same
-
-		if (eps.pointsSame(p1_2, p2_2)) // if the non-selected points are the same too...
-			return 0; // then the segments are equal
-
-		if (p1_isStart !== p2_isStart) // if one is a start and the other isn't...
-			return p1_isStart ? 1 : -1; // favor the one that isn't the start
-
-		// otherwise, we'll have to calculate which one is below the other manually
-		return eps.pointAboveOrOnLine(p1_2,
-			p2_isStart ? p2_1 : p2_2, // order matters
-			p2_isStart ? p2_2 : p2_1
-		) ? 1 : -1;
-	}
-
-	function eventAdd(ev, other_pt){
-		event_root.insertBefore(ev, function(here){
-			// should ev be inserted before here?
-			var comp = eventCompare(
-				ev  .isStart, ev  .pt,      other_pt,
-				here.isStart, here.pt, here.other.pt
-			);
-			return comp < 0;
-		});
-	}
-
-	function eventAddSegmentStart(seg, primary){
-		var ev_start = linkedList.node({
-			isStart: true,
-			pt: seg.start,
-			seg: seg,
-			primary: primary,
-			other: null,
-			status: null
-		});
-		eventAdd(ev_start, seg.end);
-		return ev_start;
-	}
-
-	function eventAddSegmentEnd(ev_start, seg, primary){
-		var ev_end = linkedList.node({
-			isStart: false,
-			pt: seg.end,
-			seg: seg,
-			primary: primary,
-			other: ev_start,
-			status: null
-		});
-		ev_start.other = ev_end;
-		eventAdd(ev_end, ev_start.pt);
-	}
-
-	function eventAddSegment(seg, primary){
-		var ev_start = eventAddSegmentStart(seg, primary);
-		eventAddSegmentEnd(ev_start, seg, primary);
-		return ev_start;
-	}
-
-	function eventUpdateEnd(ev, end){
-		// slides an end backwards
-		//   (start)------------(end)    to:
-		//   (start)---(end)
-
-		if (buildLog)
-			buildLog.segmentChop(ev.seg, end);
-
-		ev.other.remove();
-		ev.seg.end = end;
-		ev.other.pt = end;
-		eventAdd(ev.other, ev.pt);
-	}
-
-	function eventDivide(ev, pt){
-		var ns = segmentCopy(pt, ev.seg.end, ev.seg);
-		eventUpdateEnd(ev, pt);
-		return eventAddSegment(ns, ev.primary);
-	}
-
-	function calculate(primaryPolyInverted, secondaryPolyInverted){
-		// if selfIntersection is true then there is no secondary polygon, so that isn't used
-
-		//
-		// status logic
-		//
-
-		var status_root = linkedList.create();
-
-		function statusCompare(ev1, ev2){
-			var a1 = ev1.seg.start;
-			var a2 = ev1.seg.end;
-			var b1 = ev2.seg.start;
-			var b2 = ev2.seg.end;
-
-			if (eps.pointsCollinear(a1, b1, b2)){
-				if (eps.pointsCollinear(a2, b1, b2))
-					return 1;//eventCompare(true, a1, a2, true, b1, b2);
-				return eps.pointAboveOrOnLine(a2, b1, b2) ? 1 : -1;
-			}
-			return eps.pointAboveOrOnLine(a1, b1, b2) ? 1 : -1;
-		}
-
-		function statusFindSurrounding(ev){
-			return status_root.findTransition(function(here){
-				var comp = statusCompare(ev, here.ev);
-				return comp > 0;
-			});
-		}
-
-		function checkIntersection(ev1, ev2){
-			// returns the segment equal to ev1, or false if nothing equal
-
-			var seg1 = ev1.seg;
-			var seg2 = ev2.seg;
-			var a1 = seg1.start;
-			var a2 = seg1.end;
-			var b1 = seg2.start;
-			var b2 = seg2.end;
-
-			if (buildLog)
-				buildLog.checkIntersection(seg1, seg2);
-
-			var i = eps.linesIntersect(a1, a2, b1, b2);
-
-			if (i === false){
-				// segments are parallel or coincident
-
-				// if points aren't collinear, then the segments are parallel, so no intersections
-				if (!eps.pointsCollinear(a1, a2, b1))
-					return false;
-				// otherwise, segments are on top of each other somehow (aka coincident)
-
-				if (eps.pointsSame(a1, b2) || eps.pointsSame(a2, b1))
-					return false; // segments touch at endpoints... no intersection
-
-				var a1_equ_b1 = eps.pointsSame(a1, b1);
-				var a2_equ_b2 = eps.pointsSame(a2, b2);
-
-				if (a1_equ_b1 && a2_equ_b2)
-					return ev2; // segments are exactly equal
-
-				var a1_between = !a1_equ_b1 && eps.pointBetween(a1, b1, b2);
-				var a2_between = !a2_equ_b2 && eps.pointBetween(a2, b1, b2);
-
-				// handy for debugging:
-				// buildLog.log({
-				//	a1_equ_b1: a1_equ_b1,
-				//	a2_equ_b2: a2_equ_b2,
-				//	a1_between: a1_between,
-				//	a2_between: a2_between
-				// });
-
-				if (a1_equ_b1){
-					if (a2_between){
-						//  (a1)---(a2)
-						//  (b1)----------(b2)
-						eventDivide(ev2, a2);
-					}
-					else{
-						//  (a1)----------(a2)
-						//  (b1)---(b2)
-						eventDivide(ev1, b2);
-					}
-					return ev2;
-				}
-				else if (a1_between){
-					if (!a2_equ_b2){
-						// make a2 equal to b2
-						if (a2_between){
-							//         (a1)---(a2)
-							//  (b1)-----------------(b2)
-							eventDivide(ev2, a2);
-						}
-						else{
-							//         (a1)----------(a2)
-							//  (b1)----------(b2)
-							eventDivide(ev1, b2);
-						}
-					}
-
-					//         (a1)---(a2)
-					//  (b1)----------(b2)
-					eventDivide(ev2, a1);
-				}
-			}
-			else{
-				// otherwise, lines intersect at i.pt, which may or may not be between the endpoints
-
-				// is A divided between its endpoints? (exclusive)
-				if (i.alongA === 0){
-					if (i.alongB === -1) // yes, at exactly b1
-						eventDivide(ev1, b1);
-					else if (i.alongB === 0) // yes, somewhere between B's endpoints
-						eventDivide(ev1, i.pt);
-					else if (i.alongB === 1) // yes, at exactly b2
-						eventDivide(ev1, b2);
-				}
-
-				// is B divided between its endpoints? (exclusive)
-				if (i.alongB === 0){
-					if (i.alongA === -1) // yes, at exactly a1
-						eventDivide(ev2, a1);
-					else if (i.alongA === 0) // yes, somewhere between A's endpoints (exclusive)
-						eventDivide(ev2, i.pt);
-					else if (i.alongA === 1) // yes, at exactly a2
-						eventDivide(ev2, a2);
-				}
-			}
-			return false;
-		}
-
-		//
-		// main event loop
-		//
-		var segments = [];
-		while (!event_root.isEmpty()){
-			var ev = event_root.getHead();
-
-			if (buildLog)
-				buildLog.vert(ev.pt[0]);
-
-			if (ev.isStart){
-
-				if (buildLog)
-					buildLog.segmentNew(ev.seg, ev.primary);
-
-				var surrounding = statusFindSurrounding(ev);
-				var above = surrounding.before ? surrounding.before.ev : null;
-				var below = surrounding.after ? surrounding.after.ev : null;
-
-				if (buildLog){
-					buildLog.tempStatus(
-						ev.seg,
-						above ? above.seg : false,
-						below ? below.seg : false
-					);
-				}
-
-				function checkBothIntersections(){
-					if (above){
-						var eve = checkIntersection(ev, above);
-						if (eve)
-							return eve;
-					}
-					if (below)
-						return checkIntersection(ev, below);
-					return false;
-				}
-
-				var eve = checkBothIntersections();
-				if (eve){
-					// ev and eve are equal
-					// we'll keep eve and throw away ev
-
-					// merge ev.seg's fill information into eve.seg
-
-					if (selfIntersection){
-						var toggle; // are we a toggling edge?
-						if (ev.seg.myFill.below === null)
-							toggle = true;
-						else
-							toggle = ev.seg.myFill.above !== ev.seg.myFill.below;
-
-						// merge two segments that belong to the same polygon
-						// think of this as sandwiching two segments together, where `eve.seg` is
-						// the bottom -- this will cause the above fill flag to toggle
-						if (toggle)
-							eve.seg.myFill.above = !eve.seg.myFill.above;
-					}
-					else{
-						// merge two segments that belong to different polygons
-						// each segment has distinct knowledge, so no special logic is needed
-						// note that this can only happen once per segment in this phase, because we
-						// are guaranteed that all self-intersections are gone
-						eve.seg.otherFill = ev.seg.myFill;
-					}
-
-					if (buildLog)
-						buildLog.segmentUpdate(eve.seg);
-
-					ev.other.remove();
-					ev.remove();
-				}
-
-				if (event_root.getHead() !== ev){
-					// something was inserted before us in the event queue, so loop back around and
-					// process it before continuing
-					if (buildLog)
-						buildLog.rewind(ev.seg);
-					continue;
-				}
-
-				//
-				// calculate fill flags
-				//
-				if (selfIntersection){
-					var toggle; // are we a toggling edge?
-					if (ev.seg.myFill.below === null) // if we are a new segment...
-						toggle = true; // then we toggle
-					else // we are a segment that has previous knowledge from a division
-						toggle = ev.seg.myFill.above !== ev.seg.myFill.below; // calculate toggle
-
-					// next, calculate whether we are filled below us
-					if (!below){ // if nothing is below us...
-						// we are filled below us if the polygon is inverted
-						ev.seg.myFill.below = primaryPolyInverted;
-					}
-					else{
-						// otherwise, we know the answer -- it's the same if whatever is below
-						// us is filled above it
-						ev.seg.myFill.below = below.seg.myFill.above;
-					}
-
-					// since now we know if we're filled below us, we can calculate whether
-					// we're filled above us by applying toggle to whatever is below us
-					if (toggle)
-						ev.seg.myFill.above = !ev.seg.myFill.below;
-					else
-						ev.seg.myFill.above = ev.seg.myFill.below;
-				}
-				else{
-					// now we fill in any missing transition information, since we are all-knowing
-					// at this point
-
-					if (ev.seg.otherFill === null){
-						// if we don't have other information, then we need to figure out if we're
-						// inside the other polygon
-						var inside;
-						if (!below){
-							// if nothing is below us, then we're inside if the other polygon is
-							// inverted
-							inside =
-								ev.primary ? secondaryPolyInverted : primaryPolyInverted;
-						}
-						else{ // otherwise, something is below us
-							// so copy the below segment's other polygon's above
-							if (ev.primary === below.primary)
-								inside = below.seg.otherFill.above;
-							else
-								inside = below.seg.myFill.above;
-						}
-						ev.seg.otherFill = {
-							above: inside,
-							below: inside
-						};
-					}
-				}
-
-				if (buildLog){
-					buildLog.status(
-						ev.seg,
-						above ? above.seg : false,
-						below ? below.seg : false
-					);
-				}
-
-				// insert the status and remember it for later removal
-				ev.other.status = surrounding.insert(linkedList.node({ ev: ev }));
-			}
-			else{
-				var st = ev.status;
-
-				if (st === null){
-					throw new Error('PolyBool: Zero-length segment detected; your epsilon is ' +
-						'probably too small or too large');
-				}
-
-				// removing the status will create two new adjacent edges, so we'll need to check
-				// for those
-				if (status_root.exists(st.prev) && status_root.exists(st.next))
-					checkIntersection(st.prev.ev, st.next.ev);
-
-				if (buildLog)
-					buildLog.statusRemove(st.ev.seg);
-
-				// remove the status
-				st.remove();
-
-				// if we've reached this point, we've calculated everything there is to know, so
-				// save the segment for reporting
-				if (!ev.primary){
-					// make sure `seg.myFill` actually points to the primary polygon though
-					var s = ev.seg.myFill;
-					ev.seg.myFill = ev.seg.otherFill;
-					ev.seg.otherFill = s;
-				}
-				segments.push(ev.seg);
-			}
-
-			// remove the event and continue
-			event_root.getHead().remove();
-		}
-
-		if (buildLog)
-			buildLog.done();
-
-		return segments;
-	}
-
-	// return the appropriate API depending on what we're doing
-	if (!selfIntersection){
-		// performing combination of polygons, so only deal with already-processed segments
-		return {
-			calculate: function(segments1, inverted1, segments2, inverted2){
-				// segmentsX come from the self-intersection API, or this API
-				// invertedX is whether we treat that list of segments as an inverted polygon or not
-				// returns segments that can be used for further operations
-				segments1.forEach(function(seg){
-					eventAddSegment(segmentCopy(seg.start, seg.end, seg), true);
-				});
-				segments2.forEach(function(seg){
-					eventAddSegment(segmentCopy(seg.start, seg.end, seg), false);
-				});
-				return calculate(inverted1, inverted2);
-			}
-		};
-	}
-
-	// otherwise, performing self-intersection, so deal with regions
-	return {
-		addRegion: function(region){
-			// regions are a list of points:
-			//  [ [0, 0], [100, 0], [50, 100] ]
-			// you can add multiple regions before running calculate
-			var pt1;
-			var pt2 = region[region.length - 1];
-			for (var i = 0; i < region.length; i++){
-				pt1 = pt2;
-				pt2 = region[i];
-
-				var forward = eps.pointsCompare(pt1, pt2);
-				if (forward === 0) // points are equal, so we have a zero-length segment
-					continue; // just skip it
-
-				eventAddSegment(
-					segmentNew(
-						forward < 0 ? pt1 : pt2,
-						forward < 0 ? pt2 : pt1
-					),
-					true
-				);
-			}
-		},
-		calculate: function(inverted){
-			// is the polygon inverted?
-			// returns segments
-			return calculate(inverted, false);
-		}
-	};
-}
-
-var intersecter = Intersecter;
-
-// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// converts a list of segments into a list of regions, while also removing unnecessary verticies
-//
-
-function SegmentChainer(segments, eps, buildLog){
-	var chains = [];
-	var regions = [];
-
-	segments.forEach(function(seg){
-		var pt1 = seg.start;
-		var pt2 = seg.end;
-		if (eps.pointsSame(pt1, pt2)){
-			console.warn('PolyBool: Warning: Zero-length segment detected; your epsilon is ' +
-				'probably too small or too large');
-			return;
-		}
-
-		if (buildLog)
-			buildLog.chainStart(seg);
-
-		// search for two chains that this segment matches
-		var first_match = {
-			index: 0,
-			matches_head: false,
-			matches_pt1: false
-		};
-		var second_match = {
-			index: 0,
-			matches_head: false,
-			matches_pt1: false
-		};
-		var next_match = first_match;
-		function setMatch(index, matches_head, matches_pt1){
-			// return true if we've matched twice
-			next_match.index = index;
-			next_match.matches_head = matches_head;
-			next_match.matches_pt1 = matches_pt1;
-			if (next_match === first_match){
-				next_match = second_match;
-				return false;
-			}
-			next_match = null;
-			return true; // we've matched twice, we're done here
-		}
-		for (var i = 0; i < chains.length; i++){
-			var chain = chains[i];
-			var head  = chain[0];
-			var head2 = chain[1];
-			var tail  = chain[chain.length - 1];
-			var tail2 = chain[chain.length - 2];
-			if (eps.pointsSame(head, pt1)){
-				if (setMatch(i, true, true))
-					break;
-			}
-			else if (eps.pointsSame(head, pt2)){
-				if (setMatch(i, true, false))
-					break;
-			}
-			else if (eps.pointsSame(tail, pt1)){
-				if (setMatch(i, false, true))
-					break;
-			}
-			else if (eps.pointsSame(tail, pt2)){
-				if (setMatch(i, false, false))
-					break;
-			}
-		}
-
-		if (next_match === first_match){
-			// we didn't match anything, so create a new chain
-			chains.push([ pt1, pt2 ]);
-			if (buildLog)
-				buildLog.chainNew(pt1, pt2);
-			return;
-		}
-
-		if (next_match === second_match){
-			// we matched a single chain
-
-			if (buildLog)
-				buildLog.chainMatch(first_match.index);
-
-			// add the other point to the apporpriate end, and check to see if we've closed the
-			// chain into a loop
-
-			var index = first_match.index;
-			var pt = first_match.matches_pt1 ? pt2 : pt1; // if we matched pt1, then we add pt2, etc
-			var addToHead = first_match.matches_head; // if we matched at head, then add to the head
-
-			var chain = chains[index];
-			var grow  = addToHead ? chain[0] : chain[chain.length - 1];
-			var grow2 = addToHead ? chain[1] : chain[chain.length - 2];
-			var oppo  = addToHead ? chain[chain.length - 1] : chain[0];
-			var oppo2 = addToHead ? chain[chain.length - 2] : chain[1];
-
-			if (eps.pointsCollinear(grow2, grow, pt)){
-				// grow isn't needed because it's directly between grow2 and pt:
-				// grow2 ---grow---> pt
-				if (addToHead){
-					if (buildLog)
-						buildLog.chainRemoveHead(first_match.index, pt);
-					chain.shift();
-				}
-				else{
-					if (buildLog)
-						buildLog.chainRemoveTail(first_match.index, pt);
-					chain.pop();
-				}
-				grow = grow2; // old grow is gone... new grow is what grow2 was
-			}
-
-			if (eps.pointsSame(oppo, pt)){
-				// we're closing the loop, so remove chain from chains
-				chains.splice(index, 1);
-
-				if (eps.pointsCollinear(oppo2, oppo, grow)){
-					// oppo isn't needed because it's directly between oppo2 and grow:
-					// oppo2 ---oppo--->grow
-					if (addToHead){
-						if (buildLog)
-							buildLog.chainRemoveTail(first_match.index, grow);
-						chain.pop();
-					}
-					else{
-						if (buildLog)
-							buildLog.chainRemoveHead(first_match.index, grow);
-						chain.shift();
-					}
-				}
-
-				if (buildLog)
-					buildLog.chainClose(first_match.index);
-
-				// we have a closed chain!
-				regions.push(chain);
-				return;
-			}
-
-			// not closing a loop, so just add it to the apporpriate side
-			if (addToHead){
-				if (buildLog)
-					buildLog.chainAddHead(first_match.index, pt);
-				chain.unshift(pt);
-			}
-			else{
-				if (buildLog)
-					buildLog.chainAddTail(first_match.index, pt);
-				chain.push(pt);
-			}
-			return;
-		}
-
-		// otherwise, we matched two chains, so we need to combine those chains together
-
-		function reverseChain(index){
-			if (buildLog)
-				buildLog.chainReverse(index);
-			chains[index].reverse(); // gee, that's easy
-		}
-
-		function appendChain(index1, index2){
-			// index1 gets index2 appended to it, and index2 is removed
-			var chain1 = chains[index1];
-			var chain2 = chains[index2];
-			var tail  = chain1[chain1.length - 1];
-			var tail2 = chain1[chain1.length - 2];
-			var head  = chain2[0];
-			var head2 = chain2[1];
-
-			if (eps.pointsCollinear(tail2, tail, head)){
-				// tail isn't needed because it's directly between tail2 and head
-				// tail2 ---tail---> head
-				if (buildLog)
-					buildLog.chainRemoveTail(index1, tail);
-				chain1.pop();
-				tail = tail2; // old tail is gone... new tail is what tail2 was
-			}
-
-			if (eps.pointsCollinear(tail, head, head2)){
-				// head isn't needed because it's directly between tail and head2
-				// tail ---head---> head2
-				if (buildLog)
-					buildLog.chainRemoveHead(index2, head);
-				chain2.shift();
-			}
-
-			if (buildLog)
-				buildLog.chainJoin(index1, index2);
-			chains[index1] = chain1.concat(chain2);
-			chains.splice(index2, 1);
-		}
-
-		var F = first_match.index;
-		var S = second_match.index;
-
-		if (buildLog)
-			buildLog.chainConnect(F, S);
-
-		var reverseF = chains[F].length < chains[S].length; // reverse the shorter chain, if needed
-		if (first_match.matches_head){
-			if (second_match.matches_head){
-				if (reverseF){
-					// <<<< F <<<< --- >>>> S >>>>
-					reverseChain(F);
-					// >>>> F >>>> --- >>>> S >>>>
-					appendChain(F, S);
-				}
-				else{
-					// <<<< F <<<< --- >>>> S >>>>
-					reverseChain(S);
-					// <<<< F <<<< --- <<<< S <<<<   logically same as:
-					// >>>> S >>>> --- >>>> F >>>>
-					appendChain(S, F);
-				}
-			}
-			else{
-				// <<<< F <<<< --- <<<< S <<<<   logically same as:
-				// >>>> S >>>> --- >>>> F >>>>
-				appendChain(S, F);
-			}
-		}
-		else{
-			if (second_match.matches_head){
-				// >>>> F >>>> --- >>>> S >>>>
-				appendChain(F, S);
-			}
-			else{
-				if (reverseF){
-					// >>>> F >>>> --- <<<< S <<<<
-					reverseChain(F);
-					// <<<< F <<<< --- <<<< S <<<<   logically same as:
-					// >>>> S >>>> --- >>>> F >>>>
-					appendChain(S, F);
-				}
-				else{
-					// >>>> F >>>> --- <<<< S <<<<
-					reverseChain(S);
-					// >>>> F >>>> --- >>>> S >>>>
-					appendChain(F, S);
-				}
-			}
-		}
-	});
-
-	return regions;
-}
-
-var segmentChainer = SegmentChainer;
-
-// (c) Copyright 2016, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// filter a list of segments based on boolean operations
-//
-
-function select(segments, selection, buildLog){
-	var result = [];
-	segments.forEach(function(seg){
-		var index =
-			(seg.myFill.above ? 8 : 0) +
-			(seg.myFill.below ? 4 : 0) +
-			((seg.otherFill && seg.otherFill.above) ? 2 : 0) +
-			((seg.otherFill && seg.otherFill.below) ? 1 : 0);
-		if (selection[index] !== 0){
-			// copy the segment to the results, while also calculating the fill status
-			result.push({
-				id: buildLog ? buildLog.segmentId() : -1,
-				start: seg.start,
-				end: seg.end,
-				myFill: {
-					above: selection[index] === 1, // 1 if filled above
-					below: selection[index] === 2  // 2 if filled below
-				},
-				otherFill: null
-			});
-		}
-	});
-
-	if (buildLog)
-		buildLog.selected(result);
-
-	return result;
-}
-
-var SegmentSelector = {
-	union: function(segments, buildLog){ // primary | secondary
-		// above1 below1 above2 below2    Keep?               Value
-		//    0      0      0      0   =>   no                  0
-		//    0      0      0      1   =>   yes filled below    2
-		//    0      0      1      0   =>   yes filled above    1
-		//    0      0      1      1   =>   no                  0
-		//    0      1      0      0   =>   yes filled below    2
-		//    0      1      0      1   =>   yes filled below    2
-		//    0      1      1      0   =>   no                  0
-		//    0      1      1      1   =>   no                  0
-		//    1      0      0      0   =>   yes filled above    1
-		//    1      0      0      1   =>   no                  0
-		//    1      0      1      0   =>   yes filled above    1
-		//    1      0      1      1   =>   no                  0
-		//    1      1      0      0   =>   no                  0
-		//    1      1      0      1   =>   no                  0
-		//    1      1      1      0   =>   no                  0
-		//    1      1      1      1   =>   no                  0
-		return select(segments, [
-			0, 2, 1, 0,
-			2, 2, 0, 0,
-			1, 0, 1, 0,
-			0, 0, 0, 0
-		], buildLog);
-	},
-	intersect: function(segments, buildLog){ // primary & secondary
-		// above1 below1 above2 below2    Keep?               Value
-		//    0      0      0      0   =>   no                  0
-		//    0      0      0      1   =>   no                  0
-		//    0      0      1      0   =>   no                  0
-		//    0      0      1      1   =>   no                  0
-		//    0      1      0      0   =>   no                  0
-		//    0      1      0      1   =>   yes filled below    2
-		//    0      1      1      0   =>   no                  0
-		//    0      1      1      1   =>   yes filled below    2
-		//    1      0      0      0   =>   no                  0
-		//    1      0      0      1   =>   no                  0
-		//    1      0      1      0   =>   yes filled above    1
-		//    1      0      1      1   =>   yes filled above    1
-		//    1      1      0      0   =>   no                  0
-		//    1      1      0      1   =>   yes filled below    2
-		//    1      1      1      0   =>   yes filled above    1
-		//    1      1      1      1   =>   no                  0
-		return select(segments, [
-			0, 0, 0, 0,
-			0, 2, 0, 2,
-			0, 0, 1, 1,
-			0, 2, 1, 0
-		], buildLog);
-	},
-	difference: function(segments, buildLog){ // primary - secondary
-		// above1 below1 above2 below2    Keep?               Value
-		//    0      0      0      0   =>   no                  0
-		//    0      0      0      1   =>   no                  0
-		//    0      0      1      0   =>   no                  0
-		//    0      0      1      1   =>   no                  0
-		//    0      1      0      0   =>   yes filled below    2
-		//    0      1      0      1   =>   no                  0
-		//    0      1      1      0   =>   yes filled below    2
-		//    0      1      1      1   =>   no                  0
-		//    1      0      0      0   =>   yes filled above    1
-		//    1      0      0      1   =>   yes filled above    1
-		//    1      0      1      0   =>   no                  0
-		//    1      0      1      1   =>   no                  0
-		//    1      1      0      0   =>   no                  0
-		//    1      1      0      1   =>   yes filled above    1
-		//    1      1      1      0   =>   yes filled below    2
-		//    1      1      1      1   =>   no                  0
-		return select(segments, [
-			0, 0, 0, 0,
-			2, 0, 2, 0,
-			1, 1, 0, 0,
-			0, 1, 2, 0
-		], buildLog);
-	},
-	differenceRev: function(segments, buildLog){ // secondary - primary
-		// above1 below1 above2 below2    Keep?               Value
-		//    0      0      0      0   =>   no                  0
-		//    0      0      0      1   =>   yes filled below    2
-		//    0      0      1      0   =>   yes filled above    1
-		//    0      0      1      1   =>   no                  0
-		//    0      1      0      0   =>   no                  0
-		//    0      1      0      1   =>   no                  0
-		//    0      1      1      0   =>   yes filled above    1
-		//    0      1      1      1   =>   yes filled above    1
-		//    1      0      0      0   =>   no                  0
-		//    1      0      0      1   =>   yes filled below    2
-		//    1      0      1      0   =>   no                  0
-		//    1      0      1      1   =>   yes filled below    2
-		//    1      1      0      0   =>   no                  0
-		//    1      1      0      1   =>   no                  0
-		//    1      1      1      0   =>   no                  0
-		//    1      1      1      1   =>   no                  0
-		return select(segments, [
-			0, 2, 1, 0,
-			0, 0, 1, 1,
-			0, 2, 0, 2,
-			0, 0, 0, 0
-		], buildLog);
-	},
-	xor: function(segments, buildLog){ // primary ^ secondary
-		// above1 below1 above2 below2    Keep?               Value
-		//    0      0      0      0   =>   no                  0
-		//    0      0      0      1   =>   yes filled below    2
-		//    0      0      1      0   =>   yes filled above    1
-		//    0      0      1      1   =>   no                  0
-		//    0      1      0      0   =>   yes filled below    2
-		//    0      1      0      1   =>   no                  0
-		//    0      1      1      0   =>   no                  0
-		//    0      1      1      1   =>   yes filled above    1
-		//    1      0      0      0   =>   yes filled above    1
-		//    1      0      0      1   =>   no                  0
-		//    1      0      1      0   =>   no                  0
-		//    1      0      1      1   =>   yes filled below    2
-		//    1      1      0      0   =>   no                  0
-		//    1      1      0      1   =>   yes filled above    1
-		//    1      1      1      0   =>   yes filled below    2
-		//    1      1      1      1   =>   no                  0
-		return select(segments, [
-			0, 2, 1, 0,
-			2, 0, 0, 1,
-			1, 0, 0, 2,
-			0, 1, 2, 0
-		], buildLog);
-	}
-};
-
-var segmentSelector = SegmentSelector;
-
-// (c) Copyright 2017, Sean Connelly (@voidqk), http://syntheti.cc
-// MIT License
-// Project Home: https://github.com/voidqk/polybooljs
-
-//
-// convert between PolyBool polygon format and GeoJSON formats (Polygon and MultiPolygon)
-//
-
-var GeoJSON = {
-	// convert a GeoJSON object to a PolyBool polygon
-	toPolygon: function(PolyBool, geojson){
-
-		// converts list of LineString's to segments
-		function GeoPoly(coords){
-			// check for empty coords
-			if (coords.length <= 0)
-				return PolyBool.segments({ inverted: false, regions: [] });
-
-			// convert LineString to segments
-			function LineString(ls){
-				// remove tail which should be the same as head
-				var reg = ls.slice(0, ls.length - 1);
-				return PolyBool.segments({ inverted: false, regions: [reg] });
-			}
-
-			// the first LineString is considered the outside
-			var out = LineString(coords[0]);
-
-			// the rest of the LineStrings are considered interior holes, so subtract them from the
-			// current result
-			for (var i = 1; i < coords.length; i++)
-				out = PolyBool.selectDifference(PolyBool.combine(out, LineString(coords[i])));
-
-			return out;
-		}
-
-		if (geojson.type === 'Polygon'){
-			// single polygon, so just convert it and we're done
-			return PolyBool.polygon(GeoPoly(geojson.coordinates));
-		}
-		else if (geojson.type === 'MultiPolygon'){
-			// multiple polygons, so union all the polygons together
-			var out = PolyBool.segments({ inverted: false, regions: [] });
-			for (var i = 0; i < geojson.coordinates.length; i++)
-				out = PolyBool.selectUnion(PolyBool.combine(out, GeoPoly(geojson.coordinates[i])));
-			return PolyBool.polygon(out);
-		}
-		throw new Error('PolyBool: Cannot convert GeoJSON object to PolyBool polygon');
-	},
-
-	// convert a PolyBool polygon to a GeoJSON object
-	fromPolygon: function(PolyBool, eps, poly){
-		// make sure out polygon is clean
-		poly = PolyBool.polygon(PolyBool.segments(poly));
-
-		// test if r1 is inside r2
-		function regionInsideRegion(r1, r2){
-			// we're guaranteed no lines intersect (because the polygon is clean), but a vertex
-			// could be on the edge -- so we just average pt[0] and pt[1] to produce a point on the
-			// edge of the first line, which cannot be on an edge
-			return eps.pointInsideRegion([
-				(r1[0][0] + r1[1][0]) * 0.5,
-				(r1[0][1] + r1[1][1]) * 0.5
-			], r2);
-		}
-
-		// calculate inside heirarchy
-		//
-		//  _____________________   _______    roots -> A       -> F
-		// |          A          | |   F   |            |          |
-		// |  _______   _______  | |  ___  |            +-- B      +-- G
-		// | |   B   | |   C   | | | |   | |            |   |
-		// | |  ___  | |  ___  | | | |   | |            |   +-- D
-		// | | | D | | | | E | | | | | G | |            |
-		// | | |___| | | |___| | | | |   | |            +-- C
-		// | |_______| |_______| | | |___| |                |
-		// |_____________________| |_______|                +-- E
-
-		function newNode(region){
-			return {
-				region: region,
-				children: []
-			};
-		}
-
-		var roots = newNode(null);
-
-		function addChild(root, region){
-			// first check if we're inside any children
-			for (var i = 0; i < root.children.length; i++){
-				var child = root.children[i];
-				if (regionInsideRegion(region, child.region)){
-					// we are, so insert inside them instead
-					addChild(child, region);
-					return;
-				}
-			}
-
-			// not inside any children, so check to see if any children are inside us
-			var node = newNode(region);
-			for (var i = 0; i < root.children.length; i++){
-				var child = root.children[i];
-				if (regionInsideRegion(child.region, region)){
-					// oops... move the child beneath us, and remove them from root
-					node.children.push(child);
-					root.children.splice(i, 1);
-					i--;
-				}
-			}
-
-			// now we can add ourselves
-			root.children.push(node);
-		}
-
-		// add all regions to the root
-		for (var i = 0; i < poly.regions.length; i++){
-			var region = poly.regions[i];
-			if (region.length < 3) // regions must have at least 3 points (sanity check)
-				continue;
-			addChild(roots, region);
-		}
-
-		// with our heirarchy, we can distinguish between exterior borders, and interior holes
-		// the root nodes are exterior, children are interior, children's children are exterior,
-		// children's children's children are interior, etc
-
-		// while we're at it, exteriors are counter-clockwise, and interiors are clockwise
-
-		function forceWinding(region, clockwise){
-			// first, see if we're clockwise or counter-clockwise
-			// https://en.wikipedia.org/wiki/Shoelace_formula
-			var winding = 0;
-			var last_x = region[region.length - 1][0];
-			var last_y = region[region.length - 1][1];
-			var copy = [];
-			for (var i = 0; i < region.length; i++){
-				var curr_x = region[i][0];
-				var curr_y = region[i][1];
-				copy.push([curr_x, curr_y]); // create a copy while we're at it
-				winding += curr_y * last_x - curr_x * last_y;
-				last_x = curr_x;
-				last_y = curr_y;
-			}
-			// this assumes Cartesian coordinates (Y is positive going up)
-			var isclockwise = winding < 0;
-			if (isclockwise !== clockwise)
-				copy.reverse();
-			// while we're here, the last point must be the first point...
-			copy.push([copy[0][0], copy[0][1]]);
-			return copy;
-		}
-
-		var geopolys = [];
-
-		function addExterior(node){
-			var poly = [forceWinding(node.region, false)];
-			geopolys.push(poly);
-			// children of exteriors are interior
-			for (var i = 0; i < node.children.length; i++)
-				poly.push(getInterior(node.children[i]));
-		}
-
-		function getInterior(node){
-			// children of interiors are exterior
-			for (var i = 0; i < node.children.length; i++)
-				addExterior(node.children[i]);
-			// return the clockwise interior
-			return forceWinding(node.region, true);
-		}
-
-		// root nodes are exterior
-		for (var i = 0; i < roots.children.length; i++)
-			addExterior(roots.children[i]);
-
-		// lastly, construct the approrpriate GeoJSON object
-
-		if (geopolys.length <= 0) // empty GeoJSON Polygon
-			return { type: 'Polygon', coordinates: [] };
-		if (geopolys.length == 1) // use a GeoJSON Polygon
-			return { type: 'Polygon', coordinates: geopolys[0] };
-		return { // otherwise, use a GeoJSON MultiPolygon
-			type: 'MultiPolygon',
-			coordinates: geopolys
-		};
-	}
-};
-
-var geojson = GeoJSON;
-
-/*
- * @copyright 2016 Sean Connelly (@voidqk), http://syntheti.cc
- * @license MIT
- * @preserve Project Home: https://github.com/voidqk/polybooljs
+/**
+ * VectorTools is not instanciable and provide some static functions for
+ * computing things about vectors.
  */
-
-
-
-
-
-
-
-
-var buildLog$1 = false;
-var epsilon$1 = epsilon();
-
-var PolyBool;
-PolyBool = {
-	// getter/setter for buildLog
-	buildLog: function(bl){
-		if (bl === true)
-			buildLog$1 = buildLog();
-		else if (bl === false)
-			buildLog$1 = false;
-		return buildLog$1 === false ? false : buildLog$1.list;
-	},
-	// getter/setter for epsilon
-	epsilon: function(v){
-		return epsilon$1.epsilon(v);
-	},
-
-	// core API
-	segments: function(poly){
-		var i = intersecter(true, epsilon$1, buildLog$1);
-		poly.regions.forEach(i.addRegion);
-		return {
-			segments: i.calculate(poly.inverted),
-			inverted: poly.inverted
-		};
-	},
-	combine: function(segments1, segments2){
-		var i3 = intersecter(false, epsilon$1, buildLog$1);
-		return {
-			combined: i3.calculate(
-				segments1.segments, segments1.inverted,
-				segments2.segments, segments2.inverted
-			),
-			inverted1: segments1.inverted,
-			inverted2: segments2.inverted
-		};
-	},
-	selectUnion: function(combined){
-		return {
-			segments: segmentSelector.union(combined.combined, buildLog$1),
-			inverted: combined.inverted1 || combined.inverted2
-		}
-	},
-	selectIntersect: function(combined){
-		return {
-			segments: segmentSelector.intersect(combined.combined, buildLog$1),
-			inverted: combined.inverted1 && combined.inverted2
-		}
-	},
-	selectDifference: function(combined){
-		return {
-			segments: segmentSelector.difference(combined.combined, buildLog$1),
-			inverted: combined.inverted1 && !combined.inverted2
-		}
-	},
-	selectDifferenceRev: function(combined){
-		return {
-			segments: segmentSelector.differenceRev(combined.combined, buildLog$1),
-			inverted: !combined.inverted1 && combined.inverted2
-		}
-	},
-	selectXor: function(combined){
-		return {
-			segments: segmentSelector.xor(combined.combined, buildLog$1),
-			inverted: combined.inverted1 !== combined.inverted2
-		}
-	},
-	polygon: function(segments){
-		return {
-			regions: segmentChainer(segments.segments, epsilon$1, buildLog$1),
-			inverted: segments.inverted
-		};
-	},
-
-	// GeoJSON converters
-	polygonFromGeoJSON: function(geojson$$1){
-		return geojson.toPolygon(PolyBool, geojson$$1);
-	},
-	polygonToGeoJSON: function(poly){
-		return geojson.fromPolygon(PolyBool, epsilon$1, poly);
-	},
-
-	// helper functions for common operations
-	union: function(poly1, poly2){
-		return operate(poly1, poly2, PolyBool.selectUnion);
-	},
-	intersect: function(poly1, poly2){
-		return operate(poly1, poly2, PolyBool.selectIntersect);
-	},
-	difference: function(poly1, poly2){
-		return operate(poly1, poly2, PolyBool.selectDifference);
-	},
-	differenceRev: function(poly1, poly2){
-		return operate(poly1, poly2, PolyBool.selectDifferenceRev);
-	},
-	xor: function(poly1, poly2){
-		return operate(poly1, poly2, PolyBool.selectXor);
-	}
-};
-
-function operate(poly1, poly2, selector){
-	var seg1 = PolyBool.segments(poly1);
-	var seg2 = PolyBool.segments(poly2);
-	var comb = PolyBool.combine(seg1, seg2);
-	var seg3 = selector(comb);
-	return PolyBool.polygon(seg3);
-}
-
-if (typeof window === 'object')
-	window.PolyBool = PolyBool;
-
-var polybooljs = PolyBool;
-
 class VectorTools {
 
-
-
-
-  /*
-    performs a cross product between v1 and v2.
-    args:
-      v1: Array[3] - vector #1
-      v2: Array[3] - vector #2
-      normalize: boolean - normalize the output vector when true
-
-    return:
-      Array[3] - the vctor result of the cross product
-  */
-  static crossProduct(v1, v2, normalize){
-
+  /**
+   * performs a cross product between v1 and v2.
+   * @param  {Array} v1 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
+   * @param  {Array} v2 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
+   * @param  {Boolean} normalize - will force normalization of the output vector if true (default: false)
+   * @return {Array} a vector [x, y, z], result of the cross product
+   */
+  static crossProduct(v1, v2, normalize=false){
     var normalVector = [
         v1[1] * v2[2] - v1[2] * v2[1],
         (v1[0] * v2[2] - v1[2] * v2[0] ) * (-1),
@@ -3417,11 +1805,14 @@ class VectorTools {
   }
 
 
-  /*
-    compute the dot product between v1 and v2.
-    Note: v1 and v2 must be normalize so that the dot product is also
-    the cosine of the angle between v1 and v2.
-  */
+  /**
+   * Perform the dot product of two vectors. They need to be of the same dimension
+   * but they can be 2D, 3D or aother.
+   * Note: If v1 and v2 are normalize, the dot product is also the cosine
+   * @param  {Array} v1  - a vector [x, y] or [x, y, z]
+   * @param  {Array} v2 - a vector [x, y] or [x, y, z]
+   * @return {Number} the dot product
+   */
   static dotProduct(v1, v2){
     if(v1.length != v2.length){
       console.log("ERROR: v1 and v2 must be the same size to compute a dot product");
@@ -3438,13 +1829,10 @@ class VectorTools {
   }
 
 
-  /*
-    Return a normalized vector from v (does not replace v).
-    args:
-      v: Array[3] - vector to normalize
-
-    return:
-      Array[3] - a normalized vector
+ /**
+  * Normalizes a 3D vector
+  * @param  {Array} v - 3D vector to normalize
+  * @return {Array} the normalized 3D vector
   */
   static normalize(v){
     var n = VectorTools.getNorm(v);
@@ -3453,8 +1841,10 @@ class VectorTools {
   }
 
 
-  /*
-    return the norm (length) of a vector [x, y, z]
+ /**
+  * return the norm (length) of a vector [x, y, z]
+  * @param  {Array} v - 3D vector to get the norm of
+  * @return {Number} the norm
   */
   static getNorm(v){
     return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
@@ -3463,7 +1853,7 @@ class VectorTools {
 
 
   /*
-    rotate the vector v using the rotation matrix m.
+
     Args:
       v: array - [x, y, z]
       m: array[array] -
@@ -3476,6 +1866,13 @@ class VectorTools {
        dx + ey + fz,
        gx + hy + iz]
   */
+
+ /**
+  * rotate the vector v using the rotation matrix m.
+  * @param  {Array} v - 3D vector
+  * @param  {Array} m  - matrix [[a, b, c], [d, e, f], [g, h, i]]
+  * @return {Array} the rotated vector [ax + by + cz, dx + ey + fz, gx + hy + iz]
+  */
   static rotate(v, m){
     var vRot = [
       v[0]*m[0][0] + v[1]*m[0][1] + v[2]*m[0][2],
@@ -3487,15 +1884,17 @@ class VectorTools {
   }
 
 
-  /*
-    compute the angle p1p2p3 in radians.
-    Does not give the sign, just absolute angle!
-    args:
-      p1, p2, p3: array [x, y, z] - 3D coordinate of each point
-  */
+  /**
+   * Compute the angle p1p2p3 in radians.
+   * Does not give the sign, just absolute angle!
+   * @param  {Array} p1 - a 3D point [x, y, z]
+   * @param  {Array} p2 - a 3D point [x, y, z]
+   * @param  {Array} p3 - a 3D point [x, y, z]
+   * @return {Number}    [description]
+   */
   static getAnglePoints(p1, p2, p3){
 
-    //  the configuration is somthing like that:
+    //  the configuration is like that:
     //
     //  p1-----p2
     //        /
@@ -3526,11 +1925,16 @@ class VectorTools {
 
 
 
-  /**
-  * Checks if the vector u crosses the vector v. The vector u goes from point u1
-  * to point u2 and vector v goes from point v1 to point v2.
-  * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
-  */
+   /**
+   * Checks if the 2D vector u crosses the 2D vector v. The vector u goes from point u1
+   * to point u2 and vector v goes from point v1 to point v2.
+   * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
+   * @param  {Array} u1 - first point of the u vector as [x, y]
+   * @param  {Array} u2 - second point of the u vector as [x, y]
+   * @param  {Array} v1 - first point of the v vector as [x, y]
+   * @param  {Array} v2 - second point of the v vector as [x, y]
+   * @return {Array|null} crossing point as [x, y] or null if vector don't cross.
+   */
   static vector2DCrossing(u1, u2, v1, v2){
     var meet = null;
     var s1x = u2[0] - u1[0];
@@ -3554,8 +1958,12 @@ class VectorTools {
 
 
   /**
-  * Get the distance between a segment and a point
+  * Get the distance between the 2D point p and a 2D segment u (defined by its points u1 and u2)
   * Stolen from SO http://bit.ly/2oQG3yX
+  * @param  {Array} p  - a point as [x, y]
+  * @param  {Array} u1 - first point of the u vector as [x, y]
+  * @param  {Array} u2 - second point of the u vector as [x, y]
+  * @return {Number} the distance
   */
   static pointToSegmentDistance(p, u1, u2) {
     var A = p[0] - u1[0];
@@ -3592,8 +2000,24 @@ class VectorTools {
 
 }
 
+/**
+ * ConvexPolygon is a simple approach of a polygon, it's actually a simple approcah
+ * of what is a convex polygon and is mainly made to be used in the context of
+ * a polygon representing a cell of a Voronoi diagram.
+ * Here, a polygon is a list of 2D points that represent a convex polygon, with the
+ * list of point being no closed (= the last point is not a repetition of the first).
+ * The list of points describing a polygon can not be modified later.
+ */
 class ConvexPolygon {
 
+  /**
+   * Contructor.
+   * @param {Array} points - can be an array of [x, y] (both being of type Number)
+   * or it can be an array of {x: Number, y: Number}. Depending on what is the source
+   * of points, both exist.
+   * Note: there is no integrity checking that the given list of point represent
+   * an actually convex polygon.
+   */
   constructor( points ){
     this._isValid = false;
     this._hull = null;
@@ -3619,11 +2043,23 @@ class ConvexPolygon {
     }
   }
 
+
+  /**
+   * Get if the polygon is valid
+   * @return {Boolean} [description]
+   */
   isValid(){
     return this._isValid;
   }
 
 
+  /**
+   * [STATIC]
+   * Removes the duplicates of a hull so that a polygon hull does not have twice
+   * the same [x, y] points;
+   * @param {Array} polygonPoints - an array of [x, y]
+   * @return {Array} an array of [x, y], with duplicates removed
+   */
   static removeDuplicateVertices( polygonPoints ){
     var newPolyPoints = [ polygonPoints[0] ];
     var eps = 0.0001;
@@ -3639,26 +2075,20 @@ class ConvexPolygon {
           alreadyIn = true;
           break
         }
-
-        /*
-        if( (polygonPoints[i][0] - newPolyPoints[j][0]) < eps &&
-            (polygonPoints[i][1] - newPolyPoints[j][1]) < eps &&
-            (polygonPoints[i][2] - newPolyPoints[j][2]) < eps )
-        {
-          alreadyIn = true;
-          break
-        }
-        */
       }
       if( !alreadyIn ){
         newPolyPoints.push( polygonPoints[i] );
       }
     }
-
     return newPolyPoints;
   }
 
 
+  /**
+   * Get the center coordinate of a polygon by averaging all the pointd of the hull
+   * @param {Array} polygonPoints - an array of [x, y]
+   * @return {Array} the center as [x, y]
+   */
   static getPolygonCenter( polygonPoints ){
     var nbVertice = polygonPoints.length;
 
@@ -3682,9 +2112,15 @@ class ConvexPolygon {
   }
 
 
-
-
-
+  /**
+   * A list of polygon points representing a convex hull are not always listed in
+   * a clock-wise of ccw order, by default, we cannot count on it. This methods
+   * reorder the vertices of the in a clock-wise fashion, starting by the one that
+   * at noon or immediately after.
+   * Note: this is necessary to compute the area and to compare two polygons.
+   * @param {Array} polygonPoints - an array of [x, y]
+   * @return {Array} an array of [x, y]
+   */
   static orderPolygonPoints( polygonPoints ){
     var nbVertice = polygonPoints.length;
     var center = ConvexPolygon.getPolygonCenter( polygonPoints );
@@ -3703,7 +2139,7 @@ class ConvexPolygon {
       var currentRayNormalized = VectorTools.normalize(currentRay);
       var cos = VectorTools.dotProduct(verticalRay, currentRayNormalized);
       var angle = Math.acos(cos);
-      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized, false);
+      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized);
       var planeNormal = [0, 0, 1];
       var angleSign = VectorTools.dotProduct(currentPolygonNormal, planeNormal)>0? 1:-1;
       angle *= angleSign;
@@ -3735,6 +2171,10 @@ class ConvexPolygon {
 
 
 
+  /**
+   * Get the area of a this polygon. If never computed, computes it and stores it
+   * @return {Number} the area
+   */
   getArea(){
     if (! this._area){
       this._area = areaPolygon( this._hull );
@@ -3743,33 +2183,13 @@ class ConvexPolygon {
   }
 
 
-  getIntersection_OLD_BUT_OK( anotherPolygon ){
-    var polyA = {
-                regions: [
-                  this.get2DHull()
-                ],
-                inverted: false
-              };
-
-    var polyB = {
-                regions: [
-                  anotherPolygon.get2DHull()
-                ],
-                inverted: false
-              };
-
-    var vertices = polybooljs.intersect( polyA , polyB );
-    var interPolygon = new ConvexPolygon( vertices.regions[0] );
-    return interPolygon;
-  }
-
-
   /**
   * This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
   * valid way to find the intersection polygon between 2 convex polygons!
   * For this context only, we believe it's much faster tho.
+  * @param {Polygon} anotherPolygon - another polygon the get the intersection with.
   */
-  getIntersection( anotherPolygon ){
+  getCellReplacementIntersection( anotherPolygon ){
     var h1 = this.getHull();
     var h2 = anotherPolygon.getHull();
     var eps = 0.0001;
@@ -3834,16 +2254,13 @@ class ConvexPolygon {
   }
 
 
-
-
-
+  /**
+   * Get the Array of vertices. This is a reference and the point should not be
+   * modified!
+   * @return {Array} the points of the hull
+   */
   getHull(){
     return this._hull;
-  }
-
-
-  get2DHull(){
-    return this._hull.map(function(p){ return [p[0], p[1]]});
   }
 
 
@@ -3869,20 +2286,19 @@ class ConvexPolygon {
     return true;
   }
 
-
-
-
-
 }
 
 /**
 * A Cell instance defines a polygon from a Voronoi diagram and its seed.
+*
 */
 class Cell {
 
   /**
-  * Build a cell.
-  * @param {Array}
+  * Constructor, from a list of points and a seed.
+  * There is no integrity checking to make sure the seed is actually within the polygon.
+  * The polygon, since it's supposed to come from a Voronoi cell, is expected to be convex.
+  * @param {Array} contourPoints - Array of points
   */
   constructor( contourPoints, seed ){
     this._hash = Cell.genarateHash( seed.x, seed.y );
@@ -3892,65 +2308,116 @@ class Cell {
   }
 
 
+  /**
+  * Return if this cell is valid
+  * @return {Boolean} true if valid, false if not
+  */
   isValid(){
     return this._isValid;
   }
 
 
+  /**
+  * Get the hash of this cell
+  * @return {String}
+  */
   getHash(){
     return this._hash;
   }
 
 
+  /**
+  * Get the seed of the cell.
+  * @return {Object} should be of form {x: Number, y: Number, seedIndex: Number}
+  */
   getSeed(){
     return this._seed;
   }
 
 
+  /**
+  * Get the polygon of this cell
+  * @return {ConvexPolygon}
+  */
   getPolygon(){
     return this._polygon;
   }
 
 
-  // get a unique hash from 2 floats
-  static genarateHash( i1, i2 ){
+  /**
+  * [STATIC]
+  * Get a unique hash from 2 floats. I am pretty sure these super simple stringified
+  * coordinate hashes are not the most robust, though the point is mainly to be as
+  * fast as possible.
+  * @param {Number} n1 - a number, most likely the x of a coord
+  * @param {Number} n2 - a number, most likely the y of a coord
+  * @param {String} a (probably unique enough) hash
+  */
+  static genarateHash( n1, n2 ){
     //var hash = (i1 < base ? "0" : '') + i1.toString(16) +
     //           (i2 < base ? "0" : '') + i2.toString(16)
 
     //
-    var hash = i1.toString() + i2.toString();
+    var hash = n1.toString() + "_" + n2.toString();
     return hash;
   }
 
 
+  /**
+  * Get the area of the cell (calls the polygon method)
+  * @return {Number} the area
+  */
   getArea(){
     return this._polygon.getArea();
   }
 
 
+  /**
+  * Get the polygon resulting from the intersection of a voronoi cell with another
+  * cell (this second cell comes from another voronoi diagramm where a seed has been added).
+  * NOTE: This does NOT implement a standard polygon intersection algorithm, its use
+  * is stricly for the use case of voronoi cells being replaced, making it quite faster
+  * but not suitable for other cases.
+  * @param {Cell} anotherCell - another cell to intersect with
+  * @return {ConvexPolygon} the polygon resulting from the intersection
+  */
   intersectWithCell( anotherCell ){
-    //var p = this._polygon.getIntersection_OLD_BUT_OK( anotherCell.getPolygon() );
-    var p = this._polygon.getIntersection( anotherCell.getPolygon() );
-
-    return p;
+    return this._polygon.getCellReplacementIntersection( anotherCell.getPolygon() );
   }
 
 
+  /**
+  * Compare if this cell has the same polygon as another cell.
+  * Read the doc of ConvexPolygon.getPolygon() for more info.
+  * @param {Cell} anotherCell - another cell to compare the polygon with.
+  * @return {Boolean} true if the same polygon, false if not
+  */
   hasSamePolygon( otherCell ){
     return this._polygon.isSame( otherCell.getPolygon() );
   }
 
-
-
 }
 
+/**
+* A CellCollection stores Cell objects. It is the interface between the Voronoi diagram
+* and the Cells/Polygons.
+*/
 class CellCollection {
 
+  /**
+  * The constructor does not take any param.
+  */
   constructor(){
     this._cells = {};
     this._cellArray = [];
+    this._addedSeedHash = null;
   }
 
+
+  /**
+  * Builds the collection of cell using a voronoi diagram object from the Javascript-Voronoi
+  * library by Gorhill ( http://bit.ly/2FoapPI )
+  */
   buildFromVoronoiDiagram( vd ){
     var vCells = vd.cells;
 
@@ -3985,59 +2452,48 @@ class CellCollection {
 
   /**
   * Get the cell of _this_ collection that has this hash
+  * @param {String} hash - the unique hash of the cell
+  * @return {Cell} a Cell instance of null if hash not found
   */
   getCell( hash ){
     if(hash in this._cells)
       return this._cells[hash];
+    else
+      return null;
   }
 
-
-  getUnindexedCells(){
-    var  unindexedCells = [];
-
-    for(var i=0; i<this._cellArray.length; i++){
-      var cell = this._cellArray[ i ];
-      if( cell.getSeed().seedIndex === -1 )
-        unindexedCells.push( cell );
-    }
-    /*
-    for( var hash in this._cells ){
-      var cell = this._cells[ hash ]
-      if( cell.getSeed().seedIndex === -1 )
-        unindexedCells.push( cell );
-    }
-    */
-    return unindexedCells;
-  }
 
   /**
-  * Get the list of cells that are in the cell given in arg and that are NOT in
-  * _this_ collection.
-  * @param {CellCollection} anotherCellCollection - another cell collection, that presumably has cells that _this_ collection does not.
+  * Store the hash of a given position of a seed, meaning, store a reference to a cell.
+  * This seed is the one added to the 'another' diagram, when we introduce a pixel as a seed.
+  * For instance, the seed-only cell collection does not have a reference to a seed.
+  * @param {Number} x - the x position of the seed to reference
+  * @param {Number} y - the y position of the seed to reference
   */
-  getAdditionalCells( anotherCellCollection ){
-    var anotherCellHashes = anotherCellCollection.getCellHashes();
-    var extraCells = [];
-
-    for(var i=0; i<anotherCellHashes.length; i++){
-      if( !(anotherCellHashes[i] in this._cells) ){
-        extraCells.push( anotherCellCollection.getCell(anotherCellHashes[i]) );
-      }
-    }
-    return extraCells;
+  referenceSeed(x, y){
+    this._addedSeedHash = Cell.genarateHash(x, y);
   }
 
 
+  /**
+  * Get the cell that was referenced by referenceSeed()
+  * @return {Cell}
+  */
+  getReferencedSeedCell(){
+    return this._cells[ this._addedSeedHash ];
+  }
+
+
+  /**
+  * When comparing a seed-only CellCollection with a seed-and-one-pixel CellCollection
+  * with getStolenAreaInfo(), we get a list of original cell index (from the seed-only collection)
+  * as well as the area ratio that comes from them to build the pixel-based cell
+  * @param {CellCollection} anotherCellCollection - a cell collection with the original seeds + 1 pixel as a seed
+  * @return {Array} list of {seedIndex: Number, weight: Number}
+  */
   getStolenAreaInfo( anotherCellCollection ){
-    // this is the added cell from the original
-    var addedCells = anotherCellCollection.getUnindexedCells();
-
-    if(addedCells.length === 0)
-      return null;
-
-    var addedCell = addedCells[0];
+    var addedCell = anotherCellCollection.getReferencedSeedCell();
     var addedCellArea = addedCell.getArea();
-
     var modifiedCells = [];
 
     for( var hash in this._cells ){
@@ -4049,7 +2505,6 @@ class CellCollection {
       var isSame = originalCell.hasSamePolygon( newCell );
 
       if( !isSame ){
-        //console.log( `Not same: ${hash}`);
         var stolenRatio = 0;
         var stolenPoly = addedCell.intersectWithCell( originalCell );
 
@@ -4058,18 +2513,26 @@ class CellCollection {
           stolenRatio = stolenArea / addedCell.getArea();
         }
 
+        stolenRatio = Math.round( stolenRatio * 10000) / 10000;
+
         //modifiedCells.push( {cell: originalCell, stolenRatio: stolenRatio} );
-        modifiedCells.push( {seedIndex: originalCell.getSeed().seedIndex, stolenRatio: stolenRatio} );
+        modifiedCells.push( {seedIndex: originalCell.getSeed().seedIndex, weight: stolenRatio} );
       }
     }
 
     return modifiedCells;
   }
 
-
 }
 
+/**
+* The Interpolator is the API provider of natninter.
+*/
 class Interpolator {
+
+  /**
+  * No param constructor
+  */
   constructor(){
     this._seeds = [];
     this._output = { width: 256, height: 256 };
@@ -4078,6 +2541,20 @@ class Interpolator {
 
     // voronoi diagram of seeds only
     this._seedCellCollection = null;
+
+    this._onProgressCallback = null;
+  }
+
+
+  /**
+   * Define a callback for the progress of making the map and the progress of making the output image
+   * It will be called with 2 args: the progress in percentage (Number), and a description string
+   * @param  {Function} cb - callback function
+   */
+  onProgress( cb ){
+    if( cb && (typeof cb === "function")){
+      this._onProgressCallback = cb;
+    }
   }
 
 
@@ -4088,6 +2565,7 @@ class Interpolator {
     this._seeds = [];
     this._recomputeMap = true;
   }
+
 
   /**
   * Add a seed to the interpolator. Note that the seed is not copied, only its reference is.
@@ -4116,6 +2594,8 @@ class Interpolator {
 
   /**
   * Define the size of the output image
+  * @param {Number} width - width of the output image
+  * @param {Number} height - height of the output image
   */
   setOutputSize( width, height ){
     if( width > 0 && height > 0 ){
@@ -4125,6 +2605,10 @@ class Interpolator {
   }
 
 
+  /**
+  * Check if all the seeds are inside the output area defined with `setOutputSize()`
+  * @return {Boolean} true if all are inside, false if at leas one is out
+  */
   hasAllSeedsInside(){
     var size = this._output;
     return this._seeds.every( function(s){
@@ -4136,15 +2620,16 @@ class Interpolator {
   /**
   * Compute the sampling map. Automatically called by the update method when the
   * map was never computed or when a seed have been added since.
-  * Though this method is not private and can be called to force recomputing the map
+  * Though this method is not private and can be called to force recomputing the map.
+  * Note: if you have already computed a map for the exact same seed positions and output size,
+  * you can avoid recomputing it and use `getMap` and `setMap`.
   */
-  computeMap(){
+  generateMap(){
     if( !this.hasAllSeedsInside() ){
       console.log( 'ERR: some seeds are outside of the image. Use .setOutputSize() to change the output size or modify the seed.' );
       return;
     }
     this._generateSeedCells();
-    console.log( this._seedCellCollection );
 
     var w = this._output.width;
     var h = this._output.height;
@@ -4152,6 +2637,9 @@ class Interpolator {
 
     // for each pixel of the output image
     for(var i=0; i<w; i++){
+      if( this._onProgressCallback )
+        this._onProgressCallback( Math.round(((i+1)/w)*100), "sampling map" );
+
       for(var j=0; j<h; j++){
 
         var seedIndex = this.isAtSeedPosition(i, j);
@@ -4163,22 +2651,26 @@ class Interpolator {
           var stolenAreaData = this._seedCellCollection.getStolenAreaInfo( pixelCellCollection );
           this._samplingMap[ index1D ] = stolenAreaData;
         }else{
-          this._samplingMap[ index1D ] = [{seedIndex: seedIndex, stolenRatio: 1}];
+          this._samplingMap[ index1D ] = [{seedIndex: seedIndex, weight: 1}];
         }
       }
     }
-
-
-    console.log( this._samplingMap );
-    // TODO: finish map for seed positions
   }
 
 
+  /**
+  * Get the sampling map object
+  */
   getMap( m ){
     return this._samplingMap;
   }
 
 
+  /**
+  * When you don't want to recompute the sampling map with `computeMap()` and reuse
+  * the exact same seed position and output size (of course, seed values can change)
+  * @param {Array} map - an already existing sampling map
+  */
   setMap( map ){
     if( map.length === (this._output.width * this._output.height)){
       this._samplingMap = map;
@@ -4186,6 +2678,7 @@ class Interpolator {
       console.log("The sampling map must be an 1D array of size output.x*output.y");
     }
   }
+
 
   /**
   * is the given position at the position of a seed?
@@ -4203,9 +2696,10 @@ class Interpolator {
   * Generate the voronoi diagram where sites are only seeds
   */
   _generateSeedCells(){
-    var voronoi = new rhillVoronoiCore();
     var bbox = {xl: 0, xr: this._output.width, yt: 0, yb: this._output.height};
     var sites = this._seeds.map( function( s, i ){ return {x: s.x, y: s.y, seedIndex: i} });
+
+    var voronoi = new rhillVoronoiCore();
     var seedVoronoiDiagram = voronoi.compute(sites, bbox);
 
     this._seedCellCollection = new CellCollection();
@@ -4222,9 +2716,7 @@ class Interpolator {
 
     var pixelCellCollection = new CellCollection();
     pixelCellCollection.buildFromVoronoiDiagram( pixelVoronoiDiagram );
-
-    if( pixelCellCollection._cellArray.length !== (this._seeds.length + 1))
-      console.log("ERR");
+    pixelCellCollection.referenceSeed(i, j);
 
     return pixelCellCollection;
   }
@@ -4233,20 +2725,23 @@ class Interpolator {
   /**
   * Generate the output image as a floating points 1D array representing a 2D (1band)
   * image.
-  *
+  * @return {Object} of form {_data: Float32Array, _metadata: {width: Number, height: Number}}
   */
-  generate(){
+  generateImage(){
     var l = this._output.width * this._output.height;
     var outImg = new Float32Array( l );
     var seeds = this._seeds;
     var map = this._samplingMap;
 
     for(var i=0; i<l; i++){
+      if( this._onProgressCallback )
+        this._onProgressCallback( Math.round(((i+1)/l)*100), "output image" );
+
       var pixelMap = map[i];
       var sum = 0;
 
       for(var m=0; m<pixelMap.length; m++){
-        sum += (pixelMap[m].stolenRatio *  seeds[ pixelMap[m].seedIndex ].value  );
+        sum += (pixelMap[m].weight *  seeds[ pixelMap[m].seedIndex ].value  );
       }
 
       outImg[i] = sum;
@@ -4265,9 +2760,8 @@ class Interpolator {
 }
 
 exports.Interpolator = Interpolator;
-exports.VectorTools = VectorTools;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=natninter.umd.js.map
+//# sourceMappingURL=natninter.js.map

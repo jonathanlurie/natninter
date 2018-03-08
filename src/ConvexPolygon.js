@@ -1,13 +1,26 @@
 import AreaPolygon from "area-polygon";
 import PointInPolygon from 'point-in-polygon';
 
-//import greinerHormann from 'greiner-hormann';
-import PolyBool from 'polybooljs';
 import { VectorTools } from './VectorTools.js'
 
-
+/**
+ * ConvexPolygon is a simple approach of a polygon, it's actually a simple approcah
+ * of what is a convex polygon and is mainly made to be used in the context of
+ * a polygon representing a cell of a Voronoi diagram.
+ * Here, a polygon is a list of 2D points that represent a convex polygon, with the
+ * list of point being no closed (= the last point is not a repetition of the first).
+ * The list of points describing a polygon can not be modified later.
+ */
 class ConvexPolygon {
 
+  /**
+   * Contructor.
+   * @param {Array} points - can be an array of [x, y] (both being of type Number)
+   * or it can be an array of {x: Number, y: Number}. Depending on what is the source
+   * of points, both exist.
+   * Note: there is no integrity checking that the given list of point represent
+   * an actually convex polygon.
+   */
   constructor( points ){
     this._isValid = false;
     this._hull = null;
@@ -33,11 +46,23 @@ class ConvexPolygon {
     }
   }
 
+
+  /**
+   * Get if the polygon is valid
+   * @return {Boolean} [description]
+   */
   isValid(){
     return this._isValid;
   }
 
 
+  /**
+   * [STATIC]
+   * Removes the duplicates of a hull so that a polygon hull does not have twice
+   * the same [x, y] points;
+   * @param {Array} polygonPoints - an array of [x, y]
+   * @return {Array} an array of [x, y], with duplicates removed
+   */
   static removeDuplicateVertices( polygonPoints ){
     var newPolyPoints = [ polygonPoints[0] ];
     var eps = 0.0001;
@@ -53,26 +78,20 @@ class ConvexPolygon {
           alreadyIn = true;
           break
         }
-
-        /*
-        if( (polygonPoints[i][0] - newPolyPoints[j][0]) < eps &&
-            (polygonPoints[i][1] - newPolyPoints[j][1]) < eps &&
-            (polygonPoints[i][2] - newPolyPoints[j][2]) < eps )
-        {
-          alreadyIn = true;
-          break
-        }
-        */
       }
       if( !alreadyIn ){
         newPolyPoints.push( polygonPoints[i] );
       }
     }
-
     return newPolyPoints;
   }
 
 
+  /**
+   * Get the center coordinate of a polygon by averaging all the pointd of the hull
+   * @param {Array} polygonPoints - an array of [x, y]
+   * @return {Array} the center as [x, y]
+   */
   static getPolygonCenter( polygonPoints ){
     var nbVertice = polygonPoints.length;
 
@@ -96,9 +115,15 @@ class ConvexPolygon {
   }
 
 
-
-
-
+  /**
+   * A list of polygon points representing a convex hull are not always listed in
+   * a clock-wise of ccw order, by default, we cannot count on it. This methods
+   * reorder the vertices of the in a clock-wise fashion, starting by the one that
+   * at noon or immediately after.
+   * Note: this is necessary to compute the area and to compare two polygons.
+   * @param {Array} polygonPoints - an array of [x, y]
+   * @return {Array} an array of [x, y]
+   */
   static orderPolygonPoints( polygonPoints ){
     var nbVertice = polygonPoints.length;
     var center = ConvexPolygon.getPolygonCenter( polygonPoints );
@@ -117,7 +142,7 @@ class ConvexPolygon {
       var currentRayNormalized = VectorTools.normalize(currentRay);
       var cos = VectorTools.dotProduct(verticalRay, currentRayNormalized);
       var angle = Math.acos(cos);
-      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized, false);
+      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized);
       var planeNormal = [0, 0, 1];
       var angleSign = VectorTools.dotProduct(currentPolygonNormal, planeNormal)>0? 1:-1;
       angle *= angleSign;
@@ -149,6 +174,10 @@ class ConvexPolygon {
 
 
 
+  /**
+   * Get the area of a this polygon. If never computed, computes it and stores it
+   * @return {Number} the area
+   */
   getArea(){
     if (! this._area){
       this._area = AreaPolygon( this._hull );
@@ -157,33 +186,13 @@ class ConvexPolygon {
   }
 
 
-  getIntersection_OLD_BUT_OK( anotherPolygon ){
-    var polyA = {
-                regions: [
-                  this.get2DHull()
-                ],
-                inverted: false
-              }
-
-    var polyB = {
-                regions: [
-                  anotherPolygon.get2DHull()
-                ],
-                inverted: false
-              }
-
-    var vertices = PolyBool.intersect( polyA , polyB );
-    var interPolygon = new ConvexPolygon( vertices.regions[0] );
-    return interPolygon;
-  }
-
-
   /**
   * This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
   * valid way to find the intersection polygon between 2 convex polygons!
   * For this context only, we believe it's much faster tho.
+  * @param {Polygon} anotherPolygon - another polygon the get the intersection with.
   */
-  getIntersection( anotherPolygon ){
+  getCellReplacementIntersection( anotherPolygon ){
     var h1 = this.getHull();
     var h2 = anotherPolygon.getHull();
     var eps = 0.0001;
@@ -248,16 +257,13 @@ class ConvexPolygon {
   }
 
 
-
-
-
+  /**
+   * Get the Array of vertices. This is a reference and the point should not be
+   * modified!
+   * @return {Array} the points of the hull
+   */
   getHull(){
     return this._hull;
-  }
-
-
-  get2DHull(){
-    return this._hull.map(function(p){ return [p[0], p[1]]});
   }
 
 
@@ -282,10 +288,6 @@ class ConvexPolygon {
 
     return true;
   }
-
-
-
-
 
 }
 

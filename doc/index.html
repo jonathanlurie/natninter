@@ -2,198 +2,3577 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>  | Documentation</title>
+  <title>natninter 0.1.0 | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro:400,500,700' rel='stylesheet' type='text/css'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
   <link href='assets/github.css' type='text/css' rel='stylesheet' />
+  <link href='assets/split.css' type='text/css' rel='stylesheet' />
 </head>
-<body class='documentation'>
-  <div class='container'>
-    <div class='clearfix md-mxn2'>
-      <div class='fixed md-show fix-3 overflow-auto max-height-100'>
+<body class='documentation m0'>
+    <div class='flex'>
+      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'></h3>
-          <div class='mb1'><code></code></div>
+          <h3 class='mb0 no-anchor'>natninter</h3>
+          <div class='mb1'><code>0.1.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
-            class='col12 block field'
+            class='col12 block input'
             type='text' />
           <div id='toc'>
-              <a
-                href='#Foo'
-                class='block bold'>
-                Foo
-              </a>
-                <a
-                  href='#Foo.constructor'
-                  class='regular block'>
-                  #constructor
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#cell'
+                  class=" toggle-sibling">
+                  Cell
+                  <span class='icon'>▸</span>
                 </a>
-                <a
-                  href='#Foo.getAnAttribute'
-                  class='regular block'>
-                  #getAnAttribute
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#cellgenaratehash'
+                        class='regular pre-open'>
+                        .genarateHash
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#cellisvalid'
+                        class='regular pre-open'>
+                        #isValid
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellgethash'
+                        class='regular pre-open'>
+                        #getHash
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellgetseed'
+                        class='regular pre-open'>
+                        #getSeed
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellgetpolygon'
+                        class='regular pre-open'>
+                        #getPolygon
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellgetarea'
+                        class='regular pre-open'>
+                        #getArea
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellintersectwithcell'
+                        class='regular pre-open'>
+                        #intersectWithCell
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellhassamepolygon'
+                        class='regular pre-open'>
+                        #hasSamePolygon
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#cellcollection'
+                  class=" toggle-sibling">
+                  CellCollection
+                  <span class='icon'>▸</span>
                 </a>
-                <a
-                  href='#Foo.printAnAttribute'
-                  class='regular block'>
-                  #printAnAttribute
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#cellcollectionbuildfromvoronoidiagram'
+                        class='regular pre-open'>
+                        #buildFromVoronoiDiagram
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellcollectiongetcellhashes'
+                        class='regular pre-open'>
+                        #getCellHashes
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellcollectiongetcell'
+                        class='regular pre-open'>
+                        #getCell
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellcollectionreferenceseed'
+                        class='regular pre-open'>
+                        #referenceSeed
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellcollectiongetreferencedseedcell'
+                        class='regular pre-open'>
+                        #getReferencedSeedCell
+                      </a></li>
+                      
+                      <li><a
+                        href='#cellcollectiongetstolenareainfo'
+                        class='regular pre-open'>
+                        #getStolenAreaInfo
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#convexpolygon'
+                  class=" toggle-sibling">
+                  ConvexPolygon
+                  <span class='icon'>▸</span>
                 </a>
-                <a
-                  href='#Foo.setAnAttribute'
-                  class='regular block'>
-                  #setAnAttribute
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#convexpolygonremoveduplicatevertices'
+                        class='regular pre-open'>
+                        .removeDuplicateVertices
+                      </a></li>
+                    
+                      <li><a
+                        href='#convexpolygongetpolygoncenter'
+                        class='regular pre-open'>
+                        .getPolygonCenter
+                      </a></li>
+                    
+                      <li><a
+                        href='#convexpolygonorderpolygonpoints'
+                        class='regular pre-open'>
+                        .orderPolygonPoints
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#convexpolygonisvalid'
+                        class='regular pre-open'>
+                        #isValid
+                      </a></li>
+                      
+                      <li><a
+                        href='#convexpolygongetarea'
+                        class='regular pre-open'>
+                        #getArea
+                      </a></li>
+                      
+                      <li><a
+                        href='#convexpolygongetcellreplacementintersection'
+                        class='regular pre-open'>
+                        #getCellReplacementIntersection
+                      </a></li>
+                      
+                      <li><a
+                        href='#convexpolygongethull'
+                        class='regular pre-open'>
+                        #getHull
+                      </a></li>
+                      
+                      <li><a
+                        href='#convexpolygonissame'
+                        class='regular pre-open'>
+                        #isSame
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#interpolator'
+                  class=" toggle-sibling">
+                  Interpolator
+                  <span class='icon'>▸</span>
                 </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#interpolatoronprogress'
+                        class='regular pre-open'>
+                        #onProgress
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorcleanseeds'
+                        class='regular pre-open'>
+                        #cleanSeeds
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatoraddseed'
+                        class='regular pre-open'>
+                        #addSeed
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatoraddseeds'
+                        class='regular pre-open'>
+                        #addSeeds
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorsetoutputsize'
+                        class='regular pre-open'>
+                        #setOutputSize
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorhasallseedsinside'
+                        class='regular pre-open'>
+                        #hasAllSeedsInside
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorgeneratemap'
+                        class='regular pre-open'>
+                        #generateMap
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorgetmap'
+                        class='regular pre-open'>
+                        #getMap
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorsetmap'
+                        class='regular pre-open'>
+                        #setMap
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorisatseedposition'
+                        class='regular pre-open'>
+                        #isAtSeedPosition
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolator_generateseedcells'
+                        class='regular pre-open'>
+                        #_generateSeedCells
+                      </a></li>
+                      
+                      <li><a
+                        href='#interpolatorgenerateimage'
+                        class='regular pre-open'>
+                        #generateImage
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#vectortools'
+                  class=" toggle-sibling">
+                  VectorTools
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#vectortoolscrossproduct'
+                        class='regular pre-open'>
+                        .crossProduct
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolsdotproduct'
+                        class='regular pre-open'>
+                        .dotProduct
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolsnormalize'
+                        class='regular pre-open'>
+                        .normalize
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolsgetnorm'
+                        class='regular pre-open'>
+                        .getNorm
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolsrotate'
+                        class='regular pre-open'>
+                        .rotate
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolsgetanglepoints'
+                        class='regular pre-open'>
+                        .getAnglePoints
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolsvector2dcrossing'
+                        class='regular pre-open'>
+                        .vector2DCrossing
+                      </a></li>
+                    
+                      <li><a
+                        href='#vectortoolspointtosegmentdistance'
+                        class='regular pre-open'>
+                        .pointToSegmentDistance
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
           </div>
         </div>
       </div>
-      <div class='fix-margin-3'>
-        <div class='px2'>
-<div class='py1'><section class='py2 clearfix'>
-  <h2 id='Foo' class='mt0'>
-    Foo<span class='gray'>(anAttribute, aSecondAttribute)</span>
-  </h2>
-  <p>Class representing a foo.</p>
+      <div id='split-right' class='relative overflow-auto height-viewport-100'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
-    <h4>Parameters</h4>
-    <ul class='suppress-p-margin'>
-        <li> <strong>anAttribute</strong>
-          :
-          <div class='force-inline'>
-            
-          </div>
-        </li>
-        <li> <strong>aSecondAttribute</strong>
-            (default <code>10</code>)
-          :
-          <div class='force-inline'>
-            
-          </div>
-        </li>
-    </ul>
-      <h4>Instance members</h4>
-        <div class='collapsible' id='Foo.constructor'>
-          <a href='#Foo.constructor'>
-            <code>
-              #constructor<span class='gray'>(anAttribute, aSecondAttribute)</span>
-            </code>
-            <div class='force-inline'>
-              <p>Create a foo.</p>
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='cell'>
+      Cell
+    </h3>
+    
+    
+  </div>
+  
 
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='Foo.constructor' class='mt0'>
-                constructor<span class='gray'>(anAttribute, aSecondAttribute)</span>
-              </h2>
-              <p>Create a foo.</p>
-            
-                <h4>Parameters</h4>
-                <ul class='suppress-p-margin'>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code> <strong>anAttribute</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>a value.</p>
-            
-                      </div>
-                    </li>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code> <strong>aSecondAttribute</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>another value.</p>
-            
-                      </div>
-                    </li>
-                </ul>
-            </section>
-          </div>
-        </div>
-        <div class='collapsible' id='Foo.getAnAttribute'>
-          <a href='#Foo.getAnAttribute'>
-            <code>
-              #getAnAttribute<span class='gray'></span>
-            </code>
-            <div class='force-inline'>
-              
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='Foo.getAnAttribute' class='mt0'>
-                getAnAttribute<span class='gray'></span>
-              </h2>
-              
-                  <h4>Returns</h4>
-                  <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code></code>
-                  :
-                  <div class='force-inline'>
-                    <p>The anAttribute value.</p>
-            
-                  </div>
-            </section>
-          </div>
-        </div>
-        <div class='collapsible' id='Foo.printAnAttribute'>
-          <a href='#Foo.printAnAttribute'>
-            <code>
-              #printAnAttribute<span class='gray'></span>
-            </code>
-            <div class='force-inline'>
-              <p>Display anAttribute.</p>
+  <p>A Cell instance defines a polygon from a Voronoi diagram and its seed.</p>
 
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='Foo.printAnAttribute' class='mt0'>
-                printAnAttribute<span class='gray'></span>
-              </h2>
-              <p>Display anAttribute.</p>
-            
-            </section>
-          </div>
-        </div>
-        <div class='collapsible' id='Foo.setAnAttribute'>
-          <a href='#Foo.setAnAttribute'>
-            <code>
-              #setAnAttribute<span class='gray'>(a)</span>
-            </code>
-            <div class='force-inline'>
-              <p>Set anAttribute.</p>
 
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='Foo.setAnAttribute' class='mt0'>
-                setAnAttribute<span class='gray'>(a)</span>
-              </h2>
-              <p>Set anAttribute.</p>
-            
-                <h4>Parameters</h4>
-                <ul class='suppress-p-margin'>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code> <strong>a</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>the value to give to anAttribute.</p>
-            
-                      </div>
-                    </li>
-                </ul>
-            </section>
+  <div class='pre p1 fill-light mt0'>new Cell(contourPoints: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, seed: any)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>contourPoints</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    Array of points
+
           </div>
+          
         </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>seed</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='cellgenaratehash'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>genarateHash(n1, n2, a)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>[STATIC]
+Get a unique hash from 2 floats. I am pretty sure these super simple stringified
+coordinate hashes are not the most robust, though the point is mainly to be as
+fast as possible.</p>
+
+
+  <div class='pre p1 fill-light mt0'>genarateHash(n1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, n2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, a: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>n1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    a number, most likely the x of a coord
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>n2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    a number, most likely the y of a coord
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>a</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+	    (probably unique enough) hash
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 </section>
-</div>
-        </div>
+
       </div>
     </div>
+  
+</div>
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='cellisvalid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isValid()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Return if this cell is valid</p>
+
+
+  <div class='pre p1 fill-light mt0'>isValid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code>:
+        true if valid, false if not
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellgethash'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getHash()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the hash of this cell</p>
+
+
+  <div class='pre p1 fill-light mt0'>getHash(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellgetseed'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getSeed()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the seed of the cell.</p>
+
+
+  <div class='pre p1 fill-light mt0'>getSeed(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
+        should be of form {x: Number, y: Number, seedIndex: Number}
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellgetpolygon'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getPolygon()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the polygon of this cell</p>
+
+
+  <div class='pre p1 fill-light mt0'>getPolygon(): <a href="#convexpolygon">ConvexPolygon</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#convexpolygon">ConvexPolygon</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellgetarea'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getArea()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the area of the cell (calls the polygon method)</p>
+
+
+  <div class='pre p1 fill-light mt0'>getArea(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        the area
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellintersectwithcell'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>intersectWithCell(anotherCell)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the polygon resulting from the intersection of a voronoi cell with another
+cell (this second cell comes from another voronoi diagramm where a seed has been added).
+NOTE: This does NOT implement a standard polygon intersection algorithm, its use
+is stricly for the use case of voronoi cells being replaced, making it quite faster
+but not suitable for other cases.</p>
+
+
+  <div class='pre p1 fill-light mt0'>intersectWithCell(anotherCell: <a href="#cell">Cell</a>): <a href="#convexpolygon">ConvexPolygon</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>anotherCell</span> <code class='quiet'>(<a href="#cell">Cell</a>)</code>
+	    another cell to intersect with
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#convexpolygon">ConvexPolygon</a></code>:
+        the polygon resulting from the intersection
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellhassamepolygon'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>hasSamePolygon(otherCell, anotherCell)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Compare if this cell has the same polygon as another cell.
+Read the doc of ConvexPolygon.getPolygon() for more info.</p>
+
+
+  <div class='pre p1 fill-light mt0'>hasSamePolygon(otherCell: any, anotherCell: <a href="#cell">Cell</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>otherCell</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>anotherCell</span> <code class='quiet'>(<a href="#cell">Cell</a>)</code>
+	    another cell to compare the polygon with.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code>:
+        true if the same polygon, false if not
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='cellcollection'>
+      CellCollection
+    </h3>
+    
+    
   </div>
+  
+
+  <p>A CellCollection stores Cell objects. It is the interface between the Voronoi diagram
+and the Cells/Polygons.</p>
+
+
+  <div class='pre p1 fill-light mt0'>new CellCollection()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='cellcollectionbuildfromvoronoidiagram'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>buildFromVoronoiDiagram(vd)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Builds the collection of cell using a voronoi diagram object from the Javascript-Voronoi
+library by Gorhill ( <a href="http://bit.ly/2FoapPI">http://bit.ly/2FoapPI</a> )</p>
+
+
+  <div class='pre p1 fill-light mt0'>buildFromVoronoiDiagram(vd: any)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>vd</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellcollectiongetcellhashes'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getCellHashes()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the list of hashes (ID) of cells in the collection</p>
+
+
+  <div class='pre p1 fill-light mt0'>getCellHashes(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        all the hashes
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellcollectiongetcell'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getCell(hash)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the cell of <em>this</em> collection that has this hash</p>
+
+
+  <div class='pre p1 fill-light mt0'>getCell(hash: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="#cell">Cell</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>hash</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+	    the unique hash of the cell
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#cell">Cell</a></code>:
+        a Cell instance of null if hash not found
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellcollectionreferenceseed'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>referenceSeed(x, y)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Store the hash of a given position of a seed, meaning, store a reference to a cell.
+This seed is the one added to the 'another' diagram, when we introduce a pixel as a seed.
+For instance, the seed-only cell collection does not have a reference to a seed.</p>
+
+
+  <div class='pre p1 fill-light mt0'>referenceSeed(x: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, y: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>x</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    the x position of the seed to reference
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>y</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    the y position of the seed to reference
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellcollectiongetreferencedseedcell'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getReferencedSeedCell()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the cell that was referenced by referenceSeed()</p>
+
+
+  <div class='pre p1 fill-light mt0'>getReferencedSeedCell(): <a href="#cell">Cell</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#cell">Cell</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cellcollectiongetstolenareainfo'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getStolenAreaInfo(anotherCellCollection)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>When comparing a seed-only CellCollection with a seed-and-one-pixel CellCollection
+with getStolenAreaInfo(), we get a list of original cell index (from the seed-only collection)
+as well as the area ratio that comes from them to build the pixel-based cell</p>
+
+
+  <div class='pre p1 fill-light mt0'>getStolenAreaInfo(anotherCellCollection: <a href="#cellcollection">CellCollection</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>anotherCellCollection</span> <code class='quiet'>(<a href="#cellcollection">CellCollection</a>)</code>
+	    a cell collection with the original seeds + 1 pixel as a seed
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        list of {seedIndex: Number, weight: Number}
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='convexpolygon'>
+      ConvexPolygon
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>ConvexPolygon is a simple approach of a polygon, it's actually a simple approcah
+of what is a convex polygon and is mainly made to be used in the context of
+a polygon representing a cell of a Voronoi diagram.
+Here, a polygon is a list of 2D points that represent a convex polygon, with the
+list of point being no closed (= the last point is not a repetition of the first).
+The list of points describing a polygon can not be modified later.</p>
+
+
+  <div class='pre p1 fill-light mt0'>new ConvexPolygon(points: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>points</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    can be an array of 
+[
+x, y
+]
+ (both being of type Number)
+or it can be an array of {x: Number, y: Number}. Depending on what is the source
+of points, both exist.
+Note: there is no integrity checking that the given list of point represent
+an actually convex polygon.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='convexpolygonremoveduplicatevertices'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>removeDuplicateVertices(polygonPoints)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>[STATIC]
+Removes the duplicates of a hull so that a polygon hull does not have twice
+the same [x, y] points;</p>
+
+
+  <div class='pre p1 fill-light mt0'>removeDuplicateVertices(polygonPoints: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>polygonPoints</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    an array of 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        an array of 
+[
+x, y
+]
+, with duplicates removed
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='convexpolygongetpolygoncenter'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getPolygonCenter(polygonPoints)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the center coordinate of a polygon by averaging all the pointd of the hull</p>
+
+
+  <div class='pre p1 fill-light mt0'>getPolygonCenter(polygonPoints: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>polygonPoints</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    an array of 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        the center as 
+[
+x, y
+]
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='convexpolygonorderpolygonpoints'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>orderPolygonPoints(polygonPoints)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>A list of polygon points representing a convex hull are not always listed in
+a clock-wise of ccw order, by default, we cannot count on it. This methods
+reorder the vertices of the in a clock-wise fashion, starting by the one that
+at noon or immediately after.
+Note: this is necessary to compute the area and to compare two polygons.</p>
+
+
+  <div class='pre p1 fill-light mt0'>orderPolygonPoints(polygonPoints: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>polygonPoints</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    an array of 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        an array of 
+[
+x, y
+]
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='convexpolygonisvalid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isValid()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get if the polygon is valid</p>
+
+
+  <div class='pre p1 fill-light mt0'>isValid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code>:
+        [
+description
+]
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='convexpolygongetarea'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getArea()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the area of a this polygon. If never computed, computes it and stores it</p>
+
+
+  <div class='pre p1 fill-light mt0'>getArea(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        the area
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='convexpolygongetcellreplacementintersection'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getCellReplacementIntersection(anotherPolygon)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
+valid way to find the intersection polygon between 2 convex polygons!
+For this context only, we believe it's much faster tho.</p>
+
+
+  <div class='pre p1 fill-light mt0'>getCellReplacementIntersection(anotherPolygon: Polygon)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>anotherPolygon</span> <code class='quiet'>(Polygon)</code>
+	    another polygon the get the intersection with.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='convexpolygongethull'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getHull()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the Array of vertices. This is a reference and the point should not be
+modified!</p>
+
+
+  <div class='pre p1 fill-light mt0'>getHull(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        the points of the hull
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='convexpolygonissame'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isSame(otherPolygon)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Compare with another polygon and tells if it's the same.
+Predicate: polygons are convex + the first point of the list starts at noon and
+the following are going clock-wise.</p>
+
+
+  <div class='pre p1 fill-light mt0'>isSame(otherPolygon: <a href="#convexpolygon">ConvexPolygon</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>otherPolygon</span> <code class='quiet'>(<a href="#convexpolygon">ConvexPolygon</a>)</code>
+	    another polygon
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code>:
+        true is the same, false if not
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='interpolator'>
+      Interpolator
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>The Interpolator is the API provider of natninter.</p>
+
+
+  <div class='pre p1 fill-light mt0'>new Interpolator()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='interpolatoronprogress'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>onProgress(cb)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Define a callback for the progress of making the map and the progress of making the output image
+It will be called with 2 args: the progress in percentage (Number), and a description string</p>
+
+
+  <div class='pre p1 fill-light mt0'>onProgress(cb: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>cb</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    callback function
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorcleanseeds'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>cleanSeeds()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Removes all the seeds</p>
+
+
+  <div class='pre p1 fill-light mt0'>cleanSeeds()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatoraddseed'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>addSeed(seed)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Add a seed to the interpolator. Note that the seed is not copied, only its reference is.
+This is convenient for updating the value of the seed from the outside and ecompute
+the interpolation without having to recompute the whole weight map.</p>
+
+
+  <div class='pre p1 fill-light mt0'>addSeed(seed: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>seed</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    of form {x: Number, y: Number, value: Number}
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatoraddseeds'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>addSeeds(seedArr)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Add an array of seed</p>
+
+
+  <div class='pre p1 fill-light mt0'>addSeeds(seedArr: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>seedArr</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    array of seeds, where each seed is of form {x: Number, y: Number, value: Number}
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorsetoutputsize'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>setOutputSize(width, height)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Define the size of the output image</p>
+
+
+  <div class='pre p1 fill-light mt0'>setOutputSize(width: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, height: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>width</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    width of the output image
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>height</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    height of the output image
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorhasallseedsinside'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>hasAllSeedsInside()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Check if all the seeds are inside the output area defined with <code>setOutputSize()</code></p>
+
+
+  <div class='pre p1 fill-light mt0'>hasAllSeedsInside(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code>:
+        true if all are inside, false if at leas one is out
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorgeneratemap'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>generateMap()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Compute the sampling map. Automatically called by the update method when the
+map was never computed or when a seed have been added since.
+Though this method is not private and can be called to force recomputing the map.
+Note: if you have already computed a map for the exact same seed positions and output size,
+you can avoid recomputing it and use <code>getMap</code> and <code>setMap</code>.</p>
+
+
+  <div class='pre p1 fill-light mt0'>generateMap()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorgetmap'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getMap(m)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the sampling map object</p>
+
+
+  <div class='pre p1 fill-light mt0'>getMap(m: any)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>m</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorsetmap'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>setMap(map)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>When you don't want to recompute the sampling map with <code>computeMap()</code> and reuse
+the exact same seed position and output size (of course, seed values can change)</p>
+
+
+  <div class='pre p1 fill-light mt0'>setMap(map: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>map</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    an already existing sampling map
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorisatseedposition'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isAtSeedPosition(i, j)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>is the given position at the position of a seed?</p>
+
+
+  <div class='pre p1 fill-light mt0'>isAtSeedPosition(i: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, j: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>i</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    position along x axis
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>j</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
+	    position along y axis
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code>:
+        -1 if not, of the index of the seed if yes
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolator_generateseedcells'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_generateSeedCells()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>[PRIVATE]
+Generate the voronoi diagram where sites are only seeds</p>
+
+
+  <div class='pre p1 fill-light mt0'>_generateSeedCells()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='interpolatorgenerateimage'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>generateImage()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Generate the output image as a floating points 1D array representing a 2D (1band)
+image.</p>
+
+
+  <div class='pre p1 fill-light mt0'>generateImage(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
+        of form {_data: Float32Array, _metadata: {width: Number, height: Number}}
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='vectortools'>
+      VectorTools
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>VectorTools is not instanciable and provide some static functions for
+computing things about vectors.</p>
+
+
+  <div class='pre p1 fill-light mt0'>new VectorTools()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='vectortoolscrossproduct'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>crossProduct(v1, v2, normalize)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>performs a cross product between v1 and v2.</p>
+
+
+  <div class='pre p1 fill-light mt0'>crossProduct(v1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, v2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, normalize: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a vector 
+[
+x, y, z
+]
+. To use with 2D vectors, just use 
+[
+x, y, 0
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a vector 
+[
+x, y, z
+]
+. To use with 2D vectors, just use 
+[
+x, y, 0
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>normalize</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>
+            = <code>false</code>)</code>
+	    will force normalization of the output vector if true (default: false)
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        a vector 
+[
+x, y, z
+]
+, result of the cross product
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolsdotproduct'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>dotProduct(v1, v2)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Perform the dot product of two vectors. They need to be of the same dimension
+but they can be 2D, 3D or aother.
+Note: If v1 and v2 are normalize, the dot product is also the cosine</p>
+
+
+  <div class='pre p1 fill-light mt0'>dotProduct(v1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, v2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a vector 
+[
+x, y
+]
+ or 
+[
+x, y, z
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a vector 
+[
+x, y
+]
+ or 
+[
+x, y, z
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        the dot product
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolsnormalize'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>normalize(v)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Normalizes a 3D vector</p>
+
+
+  <div class='pre p1 fill-light mt0'>normalize(v: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    3D vector to normalize
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        the normalized 3D vector
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolsgetnorm'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getNorm(v)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>return the norm (length) of a vector [x, y, z]</p>
+
+
+  <div class='pre p1 fill-light mt0'>getNorm(v: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    3D vector to get the norm of
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        the norm
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolsrotate'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>rotate(v, m)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>rotate the vector v using the rotation matrix m.</p>
+
+
+  <div class='pre p1 fill-light mt0'>rotate(v: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, m: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    3D vector
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>m</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    matrix [
+[
+a, b, c
+]
+, 
+[
+d, e, f
+]
+, 
+[
+g, h, i
+]
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        the rotated vector 
+[
+ax + by + cz, dx + ey + fz, gx + hy + iz
+]
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolsgetanglepoints'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getAnglePoints(p1, p2, p3)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Compute the angle p1p2p3 in radians.
+Does not give the sign, just absolute angle!</p>
+
+
+  <div class='pre p1 fill-light mt0'>getAnglePoints(p1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, p2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, p3: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>p1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a 3D point 
+[
+x, y, z
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>p2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a 3D point 
+[
+x, y, z
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>p3</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a 3D point 
+[
+x, y, z
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        [
+description
+]
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolsvector2dcrossing'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>vector2DCrossing(u1, u2, v1, v2)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Checks if the 2D vector u crosses the 2D vector v. The vector u goes from point u1
+to point u2 and vector v goes from point v1 to point v2.
+Based on Gavin from SO <a href="http://bit.ly/2oNn741">http://bit.ly/2oNn741</a> reimplemented in JS</p>
+
+
+  <div class='pre p1 fill-light mt0'>vector2DCrossing(u1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, u2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, v1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, v2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a> | null)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>u1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    first point of the u vector as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>u2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    second point of the u vector as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    first point of the v vector as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>v2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    second point of the v vector as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a> | null)</code>:
+        crossing point as 
+[
+x, y
+]
+ or null if vector don't cross.
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vectortoolspointtosegmentdistance'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>pointToSegmentDistance(p, u1, u2)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Get the distance between the 2D point p and a 2D segment u (defined by its points u1 and u2)
+Stolen from SO <a href="http://bit.ly/2oQG3yX">http://bit.ly/2oQG3yX</a></p>
+
+
+  <div class='pre p1 fill-light mt0'>pointToSegmentDistance(p: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, u1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, u2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>p</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    a point as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>u1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    first point of the u vector as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>u2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    second point of the u vector as 
+[
+x, y
+]
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        the distance
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+      </div>
+    </div>
   <script src='assets/anchor.js'></script>
+  <script src='assets/split.js'></script>
   <script src='assets/site.js'></script>
 </body>
 </html>

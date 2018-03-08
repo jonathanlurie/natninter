@@ -1,12 +1,26 @@
 import { Cell } from './Cell.js';
 
+
+/**
+* A CellCollection stores Cell objects. It is the interface between the Voronoi diagram
+* and the Cells/Polygons.
+*/
 class CellCollection {
 
+  /**
+  * The constructor does not take any param.
+  */
   constructor(){
     this._cells = {}
     this._cellArray = [];
+    this._addedSeedHash = null;
   }
 
+
+  /**
+  * Builds the collection of cell using a voronoi diagram object from the Javascript-Voronoi
+  * library by Gorhill ( http://bit.ly/2FoapPI )
+  */
   buildFromVoronoiDiagram( vd ){
     var vCells = vd.cells;
 
@@ -41,61 +55,49 @@ class CellCollection {
 
   /**
   * Get the cell of _this_ collection that has this hash
+  * @param {String} hash - the unique hash of the cell
+  * @return {Cell} a Cell instance of null if hash not found
   */
   getCell( hash ){
     if(hash in this._cells)
       return this._cells[hash];
+    else
+      return null;
   }
 
-
-  getUnindexedCells(){
-    var  unindexedCells = [];
-
-    for(var i=0; i<this._cellArray.length; i++){
-      var cell = this._cellArray[ i ]
-      if( cell.getSeed().seedIndex === -1 )
-        unindexedCells.push( cell );
-    }
-    /*
-    for( var hash in this._cells ){
-      var cell = this._cells[ hash ]
-      if( cell.getSeed().seedIndex === -1 )
-        unindexedCells.push( cell );
-    }
-    */
-    return unindexedCells;
-  }
 
   /**
-  * Get the list of cells that are in the cell given in arg and that are NOT in
-  * _this_ collection.
-  * @param {CellCollection} anotherCellCollection - another cell collection, that presumably has cells that _this_ collection does not.
+  * Store the hash of a given position of a seed, meaning, store a reference to a cell.
+  * This seed is the one added to the 'another' diagram, when we introduce a pixel as a seed.
+  * For instance, the seed-only cell collection does not have a reference to a seed.
+  * @param {Number} x - the x position of the seed to reference
+  * @param {Number} y - the y position of the seed to reference
   */
-  getAdditionalCells( anotherCellCollection ){
-    var anotherCellHashes = anotherCellCollection.getCellHashes()
-    var extraCells = [];
-
-    for(var i=0; i<anotherCellHashes.length; i++){
-      if( !(anotherCellHashes[i] in this._cells) ){
-        extraCells.push( anotherCellCollection.getCell(anotherCellHashes[i]) );
-      }
-    }
-    return extraCells;
+  referenceSeed(x, y){
+    this._addedSeedHash = Cell.genarateHash(x, y);
   }
 
 
+  /**
+  * Get the cell that was referenced by referenceSeed()
+  * @return {Cell}
+  */
+  getReferencedSeedCell(){
+    return this._cells[ this._addedSeedHash ];
+  }
+
+
+  /**
+  * When comparing a seed-only CellCollection with a seed-and-one-pixel CellCollection
+  * with getStolenAreaInfo(), we get a list of original cell index (from the seed-only collection)
+  * as well as the area ratio that comes from them to build the pixel-based cell
+  * @param {CellCollection} anotherCellCollection - a cell collection with the original seeds + 1 pixel as a seed
+  * @return {Array} list of {seedIndex: Number, weight: Number}
+  */
   getStolenAreaInfo( anotherCellCollection ){
-    // this is the added cell from the original
-    var addedCells = anotherCellCollection.getUnindexedCells();
-
-    if(addedCells.length === 0)
-      return null;
-
-    var addedCell = addedCells[0];
+    var addedCell = anotherCellCollection.getReferencedSeedCell();
     var addedCellArea = addedCell.getArea();
-
     var modifiedCells = [];
-
     var stolenTotal = 0;
 
     for( var hash in this._cells ){
@@ -107,7 +109,6 @@ class CellCollection {
       var isSame = originalCell.hasSamePolygon( newCell );
 
       if( !isSame ){
-        //console.log( `Not same: ${hash}`);
         var stolenRatio = 0;
         var stolenPoly = addedCell.intersectWithCell( originalCell );
 
@@ -117,14 +118,15 @@ class CellCollection {
           stolenTotal += stolenRatio;
         }
 
+        stolenRatio = Math.round( stolenRatio * 10000) / 10000;
+
         //modifiedCells.push( {cell: originalCell, stolenRatio: stolenRatio} );
-        modifiedCells.push( {seedIndex: originalCell.getSeed().seedIndex, stolenRatio: stolenRatio} );
+        modifiedCells.push( {seedIndex: originalCell.getSeed().seedIndex, weight: stolenRatio} );
       }
     }
 
     return modifiedCells;
   }
-
 
 }
 
