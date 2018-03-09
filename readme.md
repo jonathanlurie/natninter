@@ -18,8 +18,26 @@ This implementation performs the interpolation in two steps:
 
 The purpose of creating the map at an intermediary step is to be able to reuse it for the same configuration but with different seed values, because what takes a while to generate is this interpolation map.
 
+## Install
+`npm install --save natninter`
+
+Use it in a HTML file:  
+```html
+<script src="natinter/dist/natninter.js"></script>
+```
+
+Use it in ES6:  
+```js
+import { natninter } from 'natninter';
+```
+
+Use it in Node:  
+```js
+const natninter = require("natninter");
+```
+
 ## Basic usage
-```Javascript
+```js
 // a list of seeds
 var seeds = [
   {x: 100, y: 100,  value: Math.random()*255 },
@@ -47,7 +65,7 @@ var output = nnInter.generateImage();
 ```
 
 The `output` is actually an object of the form:
-```Javascript
+```js
 {
   _data: Float32Array,
   _metadata: {
