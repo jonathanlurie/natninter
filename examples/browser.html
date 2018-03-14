@@ -33,20 +33,19 @@
 </head>
 <body>
   <!-- importing the automatically build module -->
-  <script src="../dist/natninter.js"></script>
+  <script src="../dist/natninter.umd.js"></script>
   <div id="canvasParent" class="drop"></div>
 
   <script>
 
     var w = 400;
     var h = 400;
-
     var seeds = [
-      {x: 100, y: 100,  value: Math.random()*255 },
-      {x: 300, y: 100,  value: Math.random()*255  },
-      {x: 300, y: 300, value: Math.random()*255 },
-      {x: 100, y: 300, value: Math.random()*255  },
-      {x: 200 , y: 200 , value: Math.random()*255 }
+      {x: 100, y: 100,  value: 10 },
+      {x: 300, y: 100,  value: 90  },
+      {x: 300, y: 300, value: 180 },
+      {x: 100, y: 300, value: 250  },
+      {x: 200 , y: 200 , value: 20 }
     ]
 
 
@@ -60,7 +59,7 @@
     ]
     */
 
-    /*
+/*
     var montage10_20 = [
     {
       name: "Fp1",
@@ -185,9 +184,14 @@
       value: Math.random() * 255//(s.value - 2) * 600
     }
   })
-  */
+*/
 
   var nnInter = new natninter.Interpolator();
+  /*
+  nnInter.onProgress( function(pc, description){
+    console.log( `${pc}% of making ${description}`);
+  })
+  */
   nnInter.setOutputSize(w, h);
   nnInter.addSeeds( seeds );
 

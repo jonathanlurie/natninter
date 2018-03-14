@@ -1,8 +1,6 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.natninter = {})));
-}(this, (function (exports) { 'use strict';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -1778,227 +1776,247 @@ var pointInPolygon = function (point, vs) {
     return inside;
 };
 
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
 /**
  * VectorTools is not instanciable and provide some static functions for
  * computing things about vectors.
  */
-class VectorTools {
-
-  /**
-   * performs a cross product between v1 and v2.
-   * @param  {Array} v1 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
-   * @param  {Array} v2 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
-   * @param  {Boolean} normalize - will force normalization of the output vector if true (default: false)
-   * @return {Array} a vector [x, y, z], result of the cross product
-   */
-  static crossProduct(v1, v2, normalize=false){
-    var normalVector = [
-        v1[1] * v2[2] - v1[2] * v2[1],
-        (v1[0] * v2[2] - v1[2] * v2[0] ) * (-1),
-        v1[0] * v2[1] - v1[1] * v2[0]
-    ];
-
-    if(normalize)
-        normalVector = VectorTools.normalize(normalVector);
-
-    return normalVector;
+var VectorTools = function () {
+  function VectorTools() {
+    classCallCheck(this, VectorTools);
   }
 
+  createClass(VectorTools, null, [{
+    key: "crossProduct",
 
-  /**
-   * Perform the dot product of two vectors. They need to be of the same dimension
-   * but they can be 2D, 3D or aother.
-   * Note: If v1 and v2 are normalize, the dot product is also the cosine
-   * @param  {Array} v1  - a vector [x, y] or [x, y, z]
-   * @param  {Array} v2 - a vector [x, y] or [x, y, z]
-   * @return {Number} the dot product
-   */
-  static dotProduct(v1, v2){
-    if(v1.length != v2.length){
-      console.log("ERROR: v1 and v2 must be the same size to compute a dot product");
-      return null;
+
+    /**
+     * performs a cross product between v1 and v2.
+     * @param  {Array} v1 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
+     * @param  {Array} v2 - a vector [x, y, z]. To use with 2D vectors, just use [x, y, 0]
+     * @param  {Boolean} normalize - will force normalization of the output vector if true (default: false)
+     * @return {Array} a vector [x, y, z], result of the cross product
+     */
+    value: function crossProduct(v1, v2) {
+      var normalize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      var normalVector = [v1[1] * v2[2] - v1[2] * v2[1], (v1[0] * v2[2] - v1[2] * v2[0]) * -1, v1[0] * v2[1] - v1[1] * v2[0]];
+
+      if (normalize) normalVector = VectorTools.normalize(normalVector);
+
+      return normalVector;
     }
 
-    var sum = 0;
+    /**
+     * Perform the dot product of two vectors. They need to be of the same dimension
+     * but they can be 2D, 3D or aother.
+     * Note: If v1 and v2 are normalize, the dot product is also the cosine
+     * @param  {Array} v1  - a vector [x, y] or [x, y, z]
+     * @param  {Array} v2 - a vector [x, y] or [x, y, z]
+     * @return {Number} the dot product
+     */
 
-    for(var i=0; i<v1.length; i++){
-      sum += (v1[i]*v2[i]);
+  }, {
+    key: "dotProduct",
+    value: function dotProduct(v1, v2) {
+      if (v1.length != v2.length) {
+        console.log("ERROR: v1 and v2 must be the same size to compute a dot product");
+        return null;
+      }
+
+      var sum = 0;
+
+      for (var i = 0; i < v1.length; i++) {
+        sum += v1[i] * v2[i];
+      }
+
+      return sum;
     }
 
-    return sum;
-  }
+    /**
+     * Normalizes a 3D vector
+     * @param  {Array} v - 3D vector to normalize
+     * @return {Array} the normalized 3D vector
+     */
 
-
- /**
-  * Normalizes a 3D vector
-  * @param  {Array} v - 3D vector to normalize
-  * @return {Array} the normalized 3D vector
-  */
-  static normalize(v){
-    var n = VectorTools.getNorm(v);
-    var normalizedV = [v[0]/n, v[1]/n, v[2]/n];
-    return normalizedV;
-  }
-
-
- /**
-  * return the norm (length) of a vector [x, y, z]
-  * @param  {Array} v - 3D vector to get the norm of
-  * @return {Number} the norm
-  */
-  static getNorm(v){
-    return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-  }
-
-
-
-  /*
-
-    Args:
-      v: array - [x, y, z]
-      m: array[array] -
-          [[a, b, c],
-           [d, e, f],
-           [g, h, i]]
-
-    Return rotated vector:
-      [ax + by + cz,
-       dx + ey + fz,
-       gx + hy + iz]
-  */
-
- /**
-  * rotate the vector v using the rotation matrix m.
-  * @param  {Array} v - 3D vector
-  * @param  {Array} m  - matrix [[a, b, c], [d, e, f], [g, h, i]]
-  * @return {Array} the rotated vector [ax + by + cz, dx + ey + fz, gx + hy + iz]
-  */
-  static rotate(v, m){
-    var vRot = [
-      v[0]*m[0][0] + v[1]*m[0][1] + v[2]*m[0][2],
-      v[0]*m[1][0] + v[1]*m[1][1] + v[2]*m[1][2],
-      v[0]*m[2][0] + v[1]*m[2][1] + v[2]*m[2][2],
-    ];
-
-    return vRot;
-  }
-
-
-  /**
-   * Compute the angle p1p2p3 in radians.
-   * Does not give the sign, just absolute angle!
-   * @param  {Array} p1 - a 3D point [x, y, z]
-   * @param  {Array} p2 - a 3D point [x, y, z]
-   * @param  {Array} p3 - a 3D point [x, y, z]
-   * @return {Number}    [description]
-   */
-  static getAnglePoints(p1, p2, p3){
-
-    //  the configuration is like that:
-    //
-    //  p1-----p2
-    //        /
-    //       /
-    //      p3
-
-    var v_p2p1 = [
-      p1[0] - p2[0],
-      p1[1] - p2[1],
-      p1[2] - p2[2],
-    ];
-
-    var v_p2p3 = [
-      p3[0] - p2[0],
-      p3[1] - p2[1],
-      p3[2] - p2[2],
-    ];
-
-    // normalizing those vectors
-    v_p2p1 = VectorTools.normalize(v_p2p1);
-    v_p2p3 = VectorTools.normalize(v_p2p3);
-
-    var cosine = VectorTools.dotProduct(v_p2p1, v_p2p3);
-    var angleRad = Math.acos(cosine);
-
-    return angleRad;
-  }
-
-
-
-   /**
-   * Checks if the 2D vector u crosses the 2D vector v. The vector u goes from point u1
-   * to point u2 and vector v goes from point v1 to point v2.
-   * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
-   * @param  {Array} u1 - first point of the u vector as [x, y]
-   * @param  {Array} u2 - second point of the u vector as [x, y]
-   * @param  {Array} v1 - first point of the v vector as [x, y]
-   * @param  {Array} v2 - second point of the v vector as [x, y]
-   * @return {Array|null} crossing point as [x, y] or null if vector don't cross.
-   */
-  static vector2DCrossing(u1, u2, v1, v2){
-    var meet = null;
-    var s1x = u2[0] - u1[0];
-    var s1y = u2[1] - u1[1];
-    var s2x = v2[0] - v1[0];
-    var s2y = v2[1] - v1[1];
-
-    var s = (-s1y * (u1[0] - v1[0]) + s1x * (u1[1] - v1[1])) / (-s2x * s1y + s1x * s2y);
-    var t = ( s2x * (u1[1] - v1[1]) - s2y * (u1[0] - v1[0])) / (-s2x * s1y + s1x * s2y);
-
-    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-    {
-      meet = [
-        u1[0] + (t * s1x),
-        u1[1] + (t * s1y)
-      ];
+  }, {
+    key: "normalize",
+    value: function normalize(v) {
+      var n = VectorTools.getNorm(v);
+      var normalizedV = [v[0] / n, v[1] / n, v[2] / n];
+      return normalizedV;
     }
 
-    return meet;
-  }
+    /**
+     * return the norm (length) of a vector [x, y, z]
+     * @param  {Array} v - 3D vector to get the norm of
+     * @return {Number} the norm
+     */
 
+  }, {
+    key: "getNorm",
+    value: function getNorm(v) {
+      return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
 
-  /**
-  * Get the distance between the 2D point p and a 2D segment u (defined by its points u1 and u2)
-  * Stolen from SO http://bit.ly/2oQG3yX
-  * @param  {Array} p  - a point as [x, y]
-  * @param  {Array} u1 - first point of the u vector as [x, y]
-  * @param  {Array} u2 - second point of the u vector as [x, y]
-  * @return {Number} the distance
-  */
-  static pointToSegmentDistance(p, u1, u2) {
-    var A = p[0] - u1[0];
-    var B = p[1] - u1[1];
-    var C = u2[0] - u1[0];
-    var D = u2[1] - u1[1];
+    /*
+       Args:
+        v: array - [x, y, z]
+        m: array[array] -
+            [[a, b, c],
+             [d, e, f],
+             [g, h, i]]
+       Return rotated vector:
+        [ax + by + cz,
+         dx + ey + fz,
+         gx + hy + iz]
+    */
 
-    var dot = A * C + B * D;
-    var lenSq = C * C + D * D;
-    var param = -1;
-    if (lenSq != 0) //in case of 0 length line
+    /**
+     * rotate the vector v using the rotation matrix m.
+     * @param  {Array} v - 3D vector
+     * @param  {Array} m  - matrix [[a, b, c], [d, e, f], [g, h, i]]
+     * @return {Array} the rotated vector [ax + by + cz, dx + ey + fz, gx + hy + iz]
+     */
+
+  }, {
+    key: "rotate",
+    value: function rotate(v, m) {
+      var vRot = [v[0] * m[0][0] + v[1] * m[0][1] + v[2] * m[0][2], v[0] * m[1][0] + v[1] * m[1][1] + v[2] * m[1][2], v[0] * m[2][0] + v[1] * m[2][1] + v[2] * m[2][2]];
+
+      return vRot;
+    }
+
+    /**
+     * Compute the angle p1p2p3 in radians.
+     * Does not give the sign, just absolute angle!
+     * @param  {Array} p1 - a 3D point [x, y, z]
+     * @param  {Array} p2 - a 3D point [x, y, z]
+     * @param  {Array} p3 - a 3D point [x, y, z]
+     * @return {Number}    [description]
+     */
+
+  }, {
+    key: "getAnglePoints",
+    value: function getAnglePoints(p1, p2, p3) {
+
+      //  the configuration is like that:
+      //
+      //  p1-----p2
+      //        /
+      //       /
+      //      p3
+
+      var v_p2p1 = [p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]];
+
+      var v_p2p3 = [p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]];
+
+      // normalizing those vectors
+      v_p2p1 = VectorTools.normalize(v_p2p1);
+      v_p2p3 = VectorTools.normalize(v_p2p3);
+
+      var cosine = VectorTools.dotProduct(v_p2p1, v_p2p3);
+      var angleRad = Math.acos(cosine);
+
+      return angleRad;
+    }
+
+    /**
+    * Checks if the 2D vector u crosses the 2D vector v. The vector u goes from point u1
+    * to point u2 and vector v goes from point v1 to point v2.
+    * Based on Gavin from SO http://bit.ly/2oNn741 reimplemented in JS
+    * @param  {Array} u1 - first point of the u vector as [x, y]
+    * @param  {Array} u2 - second point of the u vector as [x, y]
+    * @param  {Array} v1 - first point of the v vector as [x, y]
+    * @param  {Array} v2 - second point of the v vector as [x, y]
+    * @return {Array|null} crossing point as [x, y] or null if vector don't cross.
+    */
+
+  }, {
+    key: "vector2DCrossing",
+    value: function vector2DCrossing(u1, u2, v1, v2) {
+      var meet = null;
+      var s1x = u2[0] - u1[0];
+      var s1y = u2[1] - u1[1];
+      var s2x = v2[0] - v1[0];
+      var s2y = v2[1] - v1[1];
+
+      var s = (-s1y * (u1[0] - v1[0]) + s1x * (u1[1] - v1[1])) / (-s2x * s1y + s1x * s2y);
+      var t = (s2x * (u1[1] - v1[1]) - s2y * (u1[0] - v1[0])) / (-s2x * s1y + s1x * s2y);
+
+      if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+        meet = [u1[0] + t * s1x, u1[1] + t * s1y];
+      }
+
+      return meet;
+    }
+
+    /**
+    * Get the distance between the 2D point p and a 2D segment u (defined by its points u1 and u2)
+    * Stolen from SO http://bit.ly/2oQG3yX
+    * @param  {Array} p  - a point as [x, y]
+    * @param  {Array} u1 - first point of the u vector as [x, y]
+    * @param  {Array} u2 - second point of the u vector as [x, y]
+    * @return {Number} the distance
+    */
+
+  }, {
+    key: "pointToSegmentDistance",
+    value: function pointToSegmentDistance(p, u1, u2) {
+      var A = p[0] - u1[0];
+      var B = p[1] - u1[1];
+      var C = u2[0] - u1[0];
+      var D = u2[1] - u1[1];
+
+      var dot = A * C + B * D;
+      var lenSq = C * C + D * D;
+      var param = -1;
+      if (lenSq != 0) //in case of 0 length line
         param = dot / lenSq;
 
-    var xx, yy;
+      var xx, yy;
 
-    if (param < 0) {
-      xx = u1[0];
-      yy = u1[1];
+      if (param < 0) {
+        xx = u1[0];
+        yy = u1[1];
+      } else if (param > 1) {
+        xx = u2[0];
+        yy = u2[1];
+      } else {
+        xx = u1[0] + param * C;
+        yy = u1[1] + param * D;
+      }
+
+      var dx = p[0] - xx;
+      var dy = p[1] - yy;
+      return Math.sqrt(dx * dx + dy * dy);
     }
-    else if (param > 1) {
-      xx = u2[0];
-      yy = u2[1];
-    }
-    else {
-      xx = u1[0] + param * C;
-      yy = u1[1] + param * D;
-    }
-
-    var dx = p[0] - xx;
-    var dy = p[1] - yy;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-
-}
+  }]);
+  return VectorTools;
+}();
 
 /**
  * ConvexPolygon is a simple approach of a polygon, it's actually a simple approcah
@@ -2008,7 +2026,8 @@ class VectorTools {
  * list of point being no closed (= the last point is not a repetition of the first).
  * The list of points describing a polygon can not be modified later.
  */
-class ConvexPolygon {
+
+var ConvexPolygon = function () {
 
   /**
    * Contructor.
@@ -2018,281 +2037,294 @@ class ConvexPolygon {
    * Note: there is no integrity checking that the given list of point represent
    * an actually convex polygon.
    */
-  constructor( points ){
+  function ConvexPolygon(points) {
+    classCallCheck(this, ConvexPolygon);
+
     this._isValid = false;
     this._hull = null;
     this._area = null;
 
-    if( Array.isArray( points ) && points.length > 2 ){
+    if (Array.isArray(points) && points.length > 2) {
       var polygonPoints = null;
       // we are dealing with a [ {x, y}, {x, y}, ... ] polygon
-      if( "x" in points[0] && "y" in points[0] ){
-        polygonPoints = points.map( function(p){ return [p.x, p.y]} );
+      if ("x" in points[0] && "y" in points[0]) {
+        polygonPoints = points.map(function (p) {
+          return [p.x, p.y];
+        });
 
-      // we are dealing with a [ [x, y], [x, y], ... ]
-      }else if( Array.isArray( points[0] ) ){
-        polygonPoints = points.map( function(p){ return [p[0], p[1]]} );
+        // we are dealing with a [ [x, y], [x, y], ... ]
+      } else if (Array.isArray(points[0])) {
+        polygonPoints = points.map(function (p) {
+          return [p[0], p[1]];
+        });
       }
 
-      if( polygonPoints ){
-        polygonPoints = ConvexPolygon.removeDuplicateVertices( polygonPoints );
-        this._hull = ConvexPolygon.orderPolygonPoints( polygonPoints );
+      if (polygonPoints) {
+        polygonPoints = ConvexPolygon.removeDuplicateVertices(polygonPoints);
+        this._hull = ConvexPolygon.orderPolygonPoints(polygonPoints);
       }
 
       this._isValid = !!this._hull;
     }
   }
 
-
   /**
    * Get if the polygon is valid
    * @return {Boolean} [description]
    */
-  isValid(){
-    return this._isValid;
-  }
 
 
-  /**
-   * [STATIC]
-   * Removes the duplicates of a hull so that a polygon hull does not have twice
-   * the same [x, y] points;
-   * @param {Array} polygonPoints - an array of [x, y]
-   * @return {Array} an array of [x, y], with duplicates removed
-   */
-  static removeDuplicateVertices( polygonPoints ){
-    var newPolyPoints = [ polygonPoints[0] ];
-    var eps = 0.0001;
+  createClass(ConvexPolygon, [{
+    key: 'isValid',
+    value: function isValid() {
+      return this._isValid;
+    }
 
-    for(var i=1; i<polygonPoints.length; i++){
-      let alreadyIn = false;
-      for(var j=0; j<newPolyPoints.length; j++){
-        var xDiff = Math.abs(polygonPoints[i][0] - newPolyPoints[j][0]);
-        var yDiff = Math.abs(polygonPoints[i][1] - newPolyPoints[j][1]);
-        //var zDiff = Math.abs(polygonPoints[i][2] - newPolyPoints[j][2]);
+    /**
+     * [STATIC]
+     * Removes the duplicates of a hull so that a polygon hull does not have twice
+     * the same [x, y] points;
+     * @param {Array} polygonPoints - an array of [x, y]
+     * @return {Array} an array of [x, y], with duplicates removed
+     */
 
-        if( (xDiff < eps) && (yDiff < eps) /*&& (zDiff < eps)*/){
-          alreadyIn = true;
-          break
+  }, {
+    key: 'getArea',
+
+
+    /**
+     * Get the area of a this polygon. If never computed, computes it and stores it
+     * @return {Number} the area
+     */
+    value: function getArea() {
+      if (!this._area) {
+        this._area = areaPolygon(this._hull);
+      }
+      return this._area;
+    }
+
+    /**
+    * This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
+    * valid way to find the intersection polygon between 2 convex polygons!
+    * For this context only, we believe it's much faster tho.
+    * @param {Polygon} anotherPolygon - another polygon the get the intersection with.
+    */
+
+  }, {
+    key: 'getCellReplacementIntersection',
+    value: function getCellReplacementIntersection(anotherPolygon) {
+      var h1 = this.getHull();
+      var h2 = anotherPolygon.getHull();
+      var eps = 0.0001;
+
+      var intersecVectices = [];
+      var nbVerticesP1 = h1.length;
+      var nbVerticesP2 = h2.length;
+
+      // for each vertex of h1 ...
+      for (var i = 0; i < nbVerticesP1; i++) {
+        var u1 = h1[i];
+        var u2 = h1[(i + 1) % nbVerticesP1];
+
+        // case 1: all the vertices of h1 that are inside h2 have to be part of the list
+        var inside = pointInPolygon(h1[i], h2);
+        if (inside) intersecVectices.push(h1[i]);
+
+        // for each vertex of h2 ...
+        for (var j = 0; j < nbVerticesP2; j++) {
+          // case 1 bis: all the vertices of h2 that are inside h1 have to be part of the list.
+          // no need to run that every i loop
+          if (i === 0) {
+            var inside = pointInPolygon(h2[j], h1);
+            if (inside) intersecVectices.push(h2[j]);
+          }
+
+          var v1 = h2[j];
+          var v2 = h2[(j + 1) % nbVerticesP2];
+
+          // case 2: get the intersection points between the edges of this poly and
+          // the edges of anotherPolygon.
+          var intersectPoint = VectorTools.vector2DCrossing(u1, u2, v1, v2);
+          if (intersectPoint) {
+            intersecVectices.push(intersectPoint);
+          }
+
+          // case 3: a vertex of a polygon is ON/ALONG an edge of the other polygon
+          // note: this case can seem like "ho, that's an unfortunate minor case" but in the context
+          // of voronoi cell replacement, this happens A LOT!
+
+          // distance between the point v1 (that belongs to h2) and the edge u1u2 (that belongs to h1)
+          var dv1u = VectorTools.pointToSegmentDistance(v1, u1, u2);
+          if (dv1u < eps) {
+            intersecVectices.push(v1);
+          }
+
+          // distance between the point u1 (that belongs to h1) and the edge v1v2 (that belongs to h2)
+          var du1v = VectorTools.pointToSegmentDistance(u1, v1, v2);
+          if (du1v < eps) {
+            intersecVectices.push(u1);
+          }
         }
       }
-      if( !alreadyIn ){
-        newPolyPoints.push( polygonPoints[i] );
-      }
-    }
-    return newPolyPoints;
-  }
 
-
-  /**
-   * Get the center coordinate of a polygon by averaging all the pointd of the hull
-   * @param {Array} polygonPoints - an array of [x, y]
-   * @return {Array} the center as [x, y]
-   */
-  static getPolygonCenter( polygonPoints ){
-    var nbVertice = polygonPoints.length;
-
-    // find the center of the polygon
-    var xAvg = 0;
-    var yAvg = 0;
-    var zAvg = 0;
-
-    for(var v=0; v<nbVertice; v++){
-      xAvg += polygonPoints[v][0];
-      yAvg += polygonPoints[v][1];
-      zAvg += polygonPoints[v][2];
+      var interPolygon = new ConvexPolygon(intersecVectices);
+      return interPolygon;
     }
 
-    xAvg /= nbVertice;
-    yAvg /= nbVertice;
-    zAvg /= nbVertice;
-    var center = [xAvg, yAvg, zAvg];
+    /**
+     * Get the Array of vertices. This is a reference and the point should not be
+     * modified!
+     * @return {Array} the points of the hull
+     */
 
-    return center;
-  }
+  }, {
+    key: 'getHull',
+    value: function getHull() {
+      return this._hull;
+    }
 
+    /**
+    * Compare with another polygon and tells if it's the same.
+    * Predicate: polygons are convex + the first point of the list starts at noon and
+    * the following are going clock-wise.
+    * @param {ConvexPolygon} otherPolygon - another polygon
+    * @return {Boolean} true is the same, false if not
+    */
 
-  /**
-   * A list of polygon points representing a convex hull are not always listed in
-   * a clock-wise of ccw order, by default, we cannot count on it. This methods
-   * reorder the vertices of the in a clock-wise fashion, starting by the one that
-   * at noon or immediately after.
-   * Note: this is necessary to compute the area and to compare two polygons.
-   * @param {Array} polygonPoints - an array of [x, y]
-   * @return {Array} an array of [x, y]
-   */
-  static orderPolygonPoints( polygonPoints ){
-    var nbVertice = polygonPoints.length;
-    var center = ConvexPolygon.getPolygonCenter( polygonPoints );
+  }, {
+    key: 'isSame',
+    value: function isSame(otherPolygon) {
+      var eps = 0.0001;
+      var otherHull = otherPolygon.getHull();
 
-    // for each, we have .vertice (a [x, y, z] array) and .angle (rad angle to planePolygonWithAngles[0])
-    var planePolygonWithAngles = new Array( nbVertice );
-    var verticalRay = [0, 1, 0];
+      if (this._hull.length !== otherHull.length) return false;
 
-    for(var v=0; v<nbVertice; v++){
-      var currentRay = [
-        center[0] - polygonPoints[v][0],
-        center[1] - polygonPoints[v][1],
-        0
-      ];
-
-      var currentRayNormalized = VectorTools.normalize(currentRay);
-      var cos = VectorTools.dotProduct(verticalRay, currentRayNormalized);
-      var angle = Math.acos(cos);
-      var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized);
-      var planeNormal = [0, 0, 1];
-      var angleSign = VectorTools.dotProduct(currentPolygonNormal, planeNormal)>0? 1:-1;
-      angle *= angleSign;
-
-      // having only positive angles is a trick for ordering the vertices of a polygon
-      // always the same way: first vertex of the list is at noon or the one just after
-      // noon in a clock-wise direction. Then, all the other vertices are follwing in CW.
-      // Then, it's easy to figure if 2 polygons are the same.
-      if( angle < 0 ){
-        angle = Math.PI + ( Math.PI + angle );
+      for (var i = 0; i < otherHull.length; i++) {
+        if (Math.abs(otherHull[i][0] - this._hull[i][0]) > eps || Math.abs(otherHull[i][1] - this._hull[i][1]) > eps) return false;
       }
 
-      planePolygonWithAngles[v] = {vertex: polygonPoints[v], angle: angle};
+      return true;
     }
+  }], [{
+    key: 'removeDuplicateVertices',
+    value: function removeDuplicateVertices(polygonPoints) {
+      var newPolyPoints = [polygonPoints[0]];
+      var eps = 0.0001;
 
-    // sort vertices based on their angle to [0]
-    planePolygonWithAngles.sort(function(a, b){
-      return a.angle - b.angle;
-    });
+      for (var i = 1; i < polygonPoints.length; i++) {
+        var alreadyIn = false;
+        for (var j = 0; j < newPolyPoints.length; j++) {
+          var xDiff = Math.abs(polygonPoints[i][0] - newPolyPoints[j][0]);
+          var yDiff = Math.abs(polygonPoints[i][1] - newPolyPoints[j][1]);
+          //var zDiff = Math.abs(polygonPoints[i][2] - newPolyPoints[j][2]);
 
-    // make a array of vertex only (ordered)
-    var orderedVertice = [];
-    for(var v=0; v<nbVertice; v++){
-      orderedVertice.push(planePolygonWithAngles[v].vertex);
-    }
-
-    return orderedVertice;
-  }
-
-
-
-  /**
-   * Get the area of a this polygon. If never computed, computes it and stores it
-   * @return {Number} the area
-   */
-  getArea(){
-    if (! this._area){
-      this._area = areaPolygon( this._hull );
-    }
-    return this._area;
-  }
-
-
-  /**
-  * This is reliable ONLY in the context of Voronoi cells! This is NOT a generally
-  * valid way to find the intersection polygon between 2 convex polygons!
-  * For this context only, we believe it's much faster tho.
-  * @param {Polygon} anotherPolygon - another polygon the get the intersection with.
-  */
-  getCellReplacementIntersection( anotherPolygon ){
-    var h1 = this.getHull();
-    var h2 = anotherPolygon.getHull();
-    var eps = 0.0001;
-
-
-    var intersecVectices = [];
-    var nbVerticesP1 = h1.length;
-    var nbVerticesP2 = h2.length;
-
-    // for each vertex of h1 ...
-    for(var i=0; i<nbVerticesP1; i++){
-      var u1 = h1[ i ];
-      var u2 = h1[ (i+1)%nbVerticesP1 ];
-
-      // case 1: all the vertices of h1 that are inside h2 have to be part of the list
-      var inside = pointInPolygon( h1[ i ], h2);
-      if( inside )
-        intersecVectices.push( h1[ i ] );
-
-      // for each vertex of h2 ...
-      for(var j=0; j<nbVerticesP2; j++){
-        // case 1 bis: all the vertices of h2 that are inside h1 have to be part of the list.
-        // no need to run that every i loop
-        if( i === 0 ){
-          var inside = pointInPolygon( h2[ j ], h1);
-          if( inside )
-            intersecVectices.push( h2[ j ] );
+          if (xDiff < eps && yDiff < eps /*&& (zDiff < eps)*/) {
+              alreadyIn = true;
+              break;
+            }
         }
-
-        var v1 = h2[ j ];
-        var v2 = h2[ (j+1)%nbVerticesP2 ];
-
-        // case 2: get the intersection points between the edges of this poly and
-        // the edges of anotherPolygon.
-        var intersectPoint = VectorTools.vector2DCrossing(u1, u2, v1, v2);
-        if( intersectPoint ){
-          intersecVectices.push( intersectPoint );
+        if (!alreadyIn) {
+          newPolyPoints.push(polygonPoints[i]);
         }
-
-        // case 3: a vertex of a polygon is ON/ALONG an edge of the other polygon
-        // note: this case can seem like "ho, that's an unfortunate minor case" but in the context
-        // of voronoi cell replacement, this happens A LOT!
-
-        // distance between the point v1 (that belongs to h2) and the edge u1u2 (that belongs to h1)
-        var dv1u = VectorTools.pointToSegmentDistance(v1, u1, u2);
-        if( dv1u < eps ){
-          intersecVectices.push( v1 );
-        }
-
-        // distance between the point u1 (that belongs to h1) and the edge v1v2 (that belongs to h2)
-        var du1v = VectorTools.pointToSegmentDistance(u1, v1, v2);
-        if( du1v < eps ){
-          intersecVectices.push( u1 );
-        }
-
-
       }
+      return newPolyPoints;
     }
 
-    var interPolygon = new ConvexPolygon( intersecVectices );
-    return interPolygon;
-  }
+    /**
+     * Get the center coordinate of a polygon by averaging all the pointd of the hull
+     * @param {Array} polygonPoints - an array of [x, y]
+     * @return {Array} the center as [x, y]
+     */
 
+  }, {
+    key: 'getPolygonCenter',
+    value: function getPolygonCenter(polygonPoints) {
+      var nbVertice = polygonPoints.length;
 
-  /**
-   * Get the Array of vertices. This is a reference and the point should not be
-   * modified!
-   * @return {Array} the points of the hull
-   */
-  getHull(){
-    return this._hull;
-  }
+      // find the center of the polygon
+      var xAvg = 0;
+      var yAvg = 0;
+      var zAvg = 0;
 
+      for (var v = 0; v < nbVertice; v++) {
+        xAvg += polygonPoints[v][0];
+        yAvg += polygonPoints[v][1];
+        zAvg += polygonPoints[v][2];
+      }
 
-  /**
-  * Compare with another polygon and tells if it's the same.
-  * Predicate: polygons are convex + the first point of the list starts at noon and
-  * the following are going clock-wise.
-  * @param {ConvexPolygon} otherPolygon - another polygon
-  * @return {Boolean} true is the same, false if not
-  */
-  isSame( otherPolygon ){
-    var eps = 0.0001;
-    var otherHull = otherPolygon.getHull();
+      xAvg /= nbVertice;
+      yAvg /= nbVertice;
+      zAvg /= nbVertice;
+      var center = [xAvg, yAvg, zAvg];
 
-    if( this._hull.length !== otherHull.length )
-      return false;
-
-    for(var i=0; i<otherHull.length; i++){
-      if( (Math.abs(otherHull[i][0] - this._hull[i][0])>eps || Math.abs(otherHull[i][1] - this._hull[i][1]) > eps ))
-        return false;
+      return center;
     }
 
-    return true;
-  }
+    /**
+     * A list of polygon points representing a convex hull are not always listed in
+     * a clock-wise of ccw order, by default, we cannot count on it. This methods
+     * reorder the vertices of the in a clock-wise fashion, starting by the one that
+     * at noon or immediately after.
+     * Note: this is necessary to compute the area and to compare two polygons.
+     * @param {Array} polygonPoints - an array of [x, y]
+     * @return {Array} an array of [x, y]
+     */
 
-}
+  }, {
+    key: 'orderPolygonPoints',
+    value: function orderPolygonPoints(polygonPoints) {
+      var nbVertice = polygonPoints.length;
+      var center = ConvexPolygon.getPolygonCenter(polygonPoints);
+
+      // for each, we have .vertice (a [x, y, z] array) and .angle (rad angle to planePolygonWithAngles[0])
+      var planePolygonWithAngles = new Array(nbVertice);
+      var verticalRay = [0, 1, 0];
+
+      for (var v = 0; v < nbVertice; v++) {
+        var currentRay = [center[0] - polygonPoints[v][0], center[1] - polygonPoints[v][1], 0];
+
+        var currentRayNormalized = VectorTools.normalize(currentRay);
+        var cos = VectorTools.dotProduct(verticalRay, currentRayNormalized);
+        var angle = Math.acos(cos);
+        var currentPolygonNormal = VectorTools.crossProduct(verticalRay, currentRayNormalized);
+        var planeNormal = [0, 0, 1];
+        var angleSign = VectorTools.dotProduct(currentPolygonNormal, planeNormal) > 0 ? 1 : -1;
+        angle *= angleSign;
+
+        // having only positive angles is a trick for ordering the vertices of a polygon
+        // always the same way: first vertex of the list is at noon or the one just after
+        // noon in a clock-wise direction. Then, all the other vertices are follwing in CW.
+        // Then, it's easy to figure if 2 polygons are the same.
+        if (angle < 0) {
+          angle = Math.PI + (Math.PI + angle);
+        }
+
+        planePolygonWithAngles[v] = { vertex: polygonPoints[v], angle: angle };
+      }
+
+      // sort vertices based on their angle to [0]
+      planePolygonWithAngles.sort(function (a, b) {
+        return a.angle - b.angle;
+      });
+
+      // make a array of vertex only (ordered)
+      var orderedVertice = [];
+      for (var v = 0; v < nbVertice; v++) {
+        orderedVertice.push(planePolygonWithAngles[v].vertex);
+      }
+
+      return orderedVertice;
+    }
+  }]);
+  return ConvexPolygon;
+}();
 
 /**
 * A Cell instance defines a polygon from a Voronoi diagram and its seed.
 *
 */
-class Cell {
+
+var Cell = function () {
 
   /**
   * Constructor, from a list of points and a seed.
@@ -2300,240 +2332,276 @@ class Cell {
   * The polygon, since it's supposed to come from a Voronoi cell, is expected to be convex.
   * @param {Array} contourPoints - Array of points
   */
-  constructor( contourPoints, seed ){
-    this._hash = Cell.genarateHash( seed.x, seed.y );
-    this._polygon= new ConvexPolygon( contourPoints );
-    this._seed = seed;
-    this._isValid = (this._polygon.isValid() && !!this._hash);
-  }
+  function Cell(contourPoints, seed) {
+    classCallCheck(this, Cell);
 
+    this._hash = Cell.genarateHash(seed.x, seed.y);
+    this._polygon = new ConvexPolygon(contourPoints);
+    this._seed = seed;
+    this._isValid = this._polygon.isValid() && !!this._hash;
+  }
 
   /**
   * Return if this cell is valid
   * @return {Boolean} true if valid, false if not
   */
-  isValid(){
-    return this._isValid;
-  }
 
 
-  /**
-  * Get the hash of this cell
-  * @return {String}
-  */
-  getHash(){
-    return this._hash;
-  }
+  createClass(Cell, [{
+    key: "isValid",
+    value: function isValid() {
+      return this._isValid;
+    }
+
+    /**
+    * Get the hash of this cell
+    * @return {String}
+    */
+
+  }, {
+    key: "getHash",
+    value: function getHash() {
+      return this._hash;
+    }
+
+    /**
+    * Get the seed of the cell.
+    * @return {Object} should be of form {x: Number, y: Number, seedIndex: Number}
+    */
+
+  }, {
+    key: "getSeed",
+    value: function getSeed() {
+      return this._seed;
+    }
+
+    /**
+    * Get the polygon of this cell
+    * @return {ConvexPolygon}
+    */
+
+  }, {
+    key: "getPolygon",
+    value: function getPolygon() {
+      return this._polygon;
+    }
+
+    /**
+    * [STATIC]
+    * Get a unique hash from 2 floats. I am pretty sure these super simple stringified
+    * coordinate hashes are not the most robust, though the point is mainly to be as
+    * fast as possible.
+    * @param {Number} n1 - a number, most likely the x of a coord
+    * @param {Number} n2 - a number, most likely the y of a coord
+    * @param {String} a (probably unique enough) hash
+    */
+
+  }, {
+    key: "getArea",
 
 
-  /**
-  * Get the seed of the cell.
-  * @return {Object} should be of form {x: Number, y: Number, seedIndex: Number}
-  */
-  getSeed(){
-    return this._seed;
-  }
+    /**
+    * Get the area of the cell (calls the polygon method)
+    * @return {Number} the area
+    */
+    value: function getArea() {
+      return this._polygon.getArea();
+    }
 
+    /**
+    * Get the polygon resulting from the intersection of a voronoi cell with another
+    * cell (this second cell comes from another voronoi diagramm where a seed has been added).
+    * NOTE: This does NOT implement a standard polygon intersection algorithm, its use
+    * is stricly for the use case of voronoi cells being replaced, making it quite faster
+    * but not suitable for other cases.
+    * @param {Cell} anotherCell - another cell to intersect with
+    * @return {ConvexPolygon} the polygon resulting from the intersection
+    */
 
-  /**
-  * Get the polygon of this cell
-  * @return {ConvexPolygon}
-  */
-  getPolygon(){
-    return this._polygon;
-  }
+  }, {
+    key: "intersectWithCell",
+    value: function intersectWithCell(anotherCell) {
+      return this._polygon.getCellReplacementIntersection(anotherCell.getPolygon());
+    }
 
+    /**
+    * Compare if this cell has the same polygon as another cell.
+    * Read the doc of ConvexPolygon.getPolygon() for more info.
+    * @param {Cell} anotherCell - another cell to compare the polygon with.
+    * @return {Boolean} true if the same polygon, false if not
+    */
 
-  /**
-  * [STATIC]
-  * Get a unique hash from 2 floats. I am pretty sure these super simple stringified
-  * coordinate hashes are not the most robust, though the point is mainly to be as
-  * fast as possible.
-  * @param {Number} n1 - a number, most likely the x of a coord
-  * @param {Number} n2 - a number, most likely the y of a coord
-  * @param {String} a (probably unique enough) hash
-  */
-  static genarateHash( n1, n2 ){
-    //var hash = (i1 < base ? "0" : '') + i1.toString(16) +
-    //           (i2 < base ? "0" : '') + i2.toString(16)
+  }, {
+    key: "hasSamePolygon",
+    value: function hasSamePolygon(otherCell) {
+      return this._polygon.isSame(otherCell.getPolygon());
+    }
+  }], [{
+    key: "genarateHash",
+    value: function genarateHash(n1, n2) {
+      //var hash = (i1 < base ? "0" : '') + i1.toString(16) +
+      //           (i2 < base ? "0" : '') + i2.toString(16)
 
-    //
-    var hash = n1.toString() + "_" + n2.toString();
-    return hash;
-  }
-
-
-  /**
-  * Get the area of the cell (calls the polygon method)
-  * @return {Number} the area
-  */
-  getArea(){
-    return this._polygon.getArea();
-  }
-
-
-  /**
-  * Get the polygon resulting from the intersection of a voronoi cell with another
-  * cell (this second cell comes from another voronoi diagramm where a seed has been added).
-  * NOTE: This does NOT implement a standard polygon intersection algorithm, its use
-  * is stricly for the use case of voronoi cells being replaced, making it quite faster
-  * but not suitable for other cases.
-  * @param {Cell} anotherCell - another cell to intersect with
-  * @return {ConvexPolygon} the polygon resulting from the intersection
-  */
-  intersectWithCell( anotherCell ){
-    return this._polygon.getCellReplacementIntersection( anotherCell.getPolygon() );
-  }
-
-
-  /**
-  * Compare if this cell has the same polygon as another cell.
-  * Read the doc of ConvexPolygon.getPolygon() for more info.
-  * @param {Cell} anotherCell - another cell to compare the polygon with.
-  * @return {Boolean} true if the same polygon, false if not
-  */
-  hasSamePolygon( otherCell ){
-    return this._polygon.isSame( otherCell.getPolygon() );
-  }
-
-}
+      //
+      var hash = n1.toString() + "_" + n2.toString();
+      return hash;
+    }
+  }]);
+  return Cell;
+}();
 
 /**
 * A CellCollection stores Cell objects. It is the interface between the Voronoi diagram
 * and the Cells/Polygons.
 */
-class CellCollection {
+
+var CellCollection = function () {
 
   /**
   * The constructor does not take any param.
   */
-  constructor(){
+  function CellCollection() {
+    classCallCheck(this, CellCollection);
+
     this._cells = {};
     this._cellArray = [];
     this._addedSeedHash = null;
   }
 
-
   /**
   * Builds the collection of cell using a voronoi diagram object from the Javascript-Voronoi
   * library by Gorhill ( http://bit.ly/2FoapPI )
   */
-  buildFromVoronoiDiagram( vd ){
-    var vCells = vd.cells;
-
-    // for each cell
-    for(var i=0; i<vCells.length; i++){
-      var cellhes = vCells[i].halfedges;
-      var points = [];
-
-      for(var j=0; j<cellhes.length; j++){
-        points.push( cellhes[j].edge.va );
-        points.push( cellhes[j].edge.vb );
-      }
-
-      // build a cell
-      var cell = new Cell( points, vCells[i].site );
-      if( cell.isValid() ){
-        this._cells[ cell.getHash() ] = cell;
-        this._cellArray.push( cell );
-      }
-    }
-  }
 
 
-  /**
-  * Get the list of hashes (ID) of cells in the collection
-  * @return {Array} all the hashes
-  */
-  getCellHashes(){
-    return Object.keys( this._cells );
-  }
+  createClass(CellCollection, [{
+    key: 'buildFromVoronoiDiagram',
+    value: function buildFromVoronoiDiagram(vd) {
+      var vCells = vd.cells;
 
+      // for each cell
+      for (var i = 0; i < vCells.length; i++) {
+        var cellhes = vCells[i].halfedges;
+        var points = [];
 
-  /**
-  * Get the cell of _this_ collection that has this hash
-  * @param {String} hash - the unique hash of the cell
-  * @return {Cell} a Cell instance of null if hash not found
-  */
-  getCell( hash ){
-    if(hash in this._cells)
-      return this._cells[hash];
-    else
-      return null;
-  }
-
-
-  /**
-  * Store the hash of a given position of a seed, meaning, store a reference to a cell.
-  * This seed is the one added to the 'another' diagram, when we introduce a pixel as a seed.
-  * For instance, the seed-only cell collection does not have a reference to a seed.
-  * @param {Number} x - the x position of the seed to reference
-  * @param {Number} y - the y position of the seed to reference
-  */
-  referenceSeed(x, y){
-    this._addedSeedHash = Cell.genarateHash(x, y);
-  }
-
-
-  /**
-  * Get the cell that was referenced by referenceSeed()
-  * @return {Cell}
-  */
-  getReferencedSeedCell(){
-    return this._cells[ this._addedSeedHash ];
-  }
-
-
-  /**
-  * When comparing a seed-only CellCollection with a seed-and-one-pixel CellCollection
-  * with getStolenAreaInfo(), we get a list of original cell index (from the seed-only collection)
-  * as well as the area ratio that comes from them to build the pixel-based cell
-  * @param {CellCollection} anotherCellCollection - a cell collection with the original seeds + 1 pixel as a seed
-  * @return {Array} list of {seedIndex: Number, weight: Number}
-  */
-  getStolenAreaInfo( anotherCellCollection ){
-    var addedCell = anotherCellCollection.getReferencedSeedCell();
-    var addedCellArea = addedCell.getArea();
-    var modifiedCells = [];
-
-    for( var hash in this._cells ){
-      if( hash === addedCell.getHash() )
-        continue;
-
-      var originalCell = this._cells[ hash ];
-      var newCell = anotherCellCollection.getCell( hash );
-      var isSame = originalCell.hasSamePolygon( newCell );
-
-      if( !isSame ){
-        var stolenRatio = 0;
-        var stolenPoly = addedCell.intersectWithCell( originalCell );
-
-        if( stolenPoly.isValid() ){
-          var stolenArea = stolenPoly.getArea();
-          stolenRatio = stolenArea / addedCell.getArea();
+        for (var j = 0; j < cellhes.length; j++) {
+          points.push(cellhes[j].edge.va);
+          points.push(cellhes[j].edge.vb);
         }
 
-        stolenRatio = Math.round( stolenRatio * 10000) / 10000;
-
-        //modifiedCells.push( {cell: originalCell, stolenRatio: stolenRatio} );
-        modifiedCells.push( {seedIndex: originalCell.getSeed().seedIndex, weight: stolenRatio} );
+        // build a cell
+        var cell = new Cell(points, vCells[i].site);
+        if (cell.isValid()) {
+          this._cells[cell.getHash()] = cell;
+          this._cellArray.push(cell);
+        }
       }
     }
 
-    return modifiedCells;
-  }
+    /**
+    * Get the list of hashes (ID) of cells in the collection
+    * @return {Array} all the hashes
+    */
 
-}
+  }, {
+    key: 'getCellHashes',
+    value: function getCellHashes() {
+      return Object.keys(this._cells);
+    }
+
+    /**
+    * Get the cell of _this_ collection that has this hash
+    * @param {String} hash - the unique hash of the cell
+    * @return {Cell} a Cell instance of null if hash not found
+    */
+
+  }, {
+    key: 'getCell',
+    value: function getCell(hash) {
+      if (hash in this._cells) return this._cells[hash];else return null;
+    }
+
+    /**
+    * Store the hash of a given position of a seed, meaning, store a reference to a cell.
+    * This seed is the one added to the 'another' diagram, when we introduce a pixel as a seed.
+    * For instance, the seed-only cell collection does not have a reference to a seed.
+    * @param {Number} x - the x position of the seed to reference
+    * @param {Number} y - the y position of the seed to reference
+    */
+
+  }, {
+    key: 'referenceSeed',
+    value: function referenceSeed(x, y) {
+      this._addedSeedHash = Cell.genarateHash(x, y);
+    }
+
+    /**
+    * Get the cell that was referenced by referenceSeed()
+    * @return {Cell}
+    */
+
+  }, {
+    key: 'getReferencedSeedCell',
+    value: function getReferencedSeedCell() {
+      return this._cells[this._addedSeedHash];
+    }
+
+    /**
+    * When comparing a seed-only CellCollection with a seed-and-one-pixel CellCollection
+    * with getStolenAreaInfo(), we get a list of original cell index (from the seed-only collection)
+    * as well as the area ratio that comes from them to build the pixel-based cell
+    * @param {CellCollection} anotherCellCollection - a cell collection with the original seeds + 1 pixel as a seed
+    * @return {Array} list of {seedIndex: Number, weight: Number}
+    */
+
+  }, {
+    key: 'getStolenAreaInfo',
+    value: function getStolenAreaInfo(anotherCellCollection) {
+      var addedCell = anotherCellCollection.getReferencedSeedCell();
+      var addedCellArea = addedCell.getArea();
+      var modifiedCells = [];
+
+      for (var hash in this._cells) {
+        if (hash === addedCell.getHash()) continue;
+
+        var originalCell = this._cells[hash];
+        var newCell = anotherCellCollection.getCell(hash);
+        var isSame = originalCell.hasSamePolygon(newCell);
+
+        if (!isSame) {
+          var stolenRatio = 0;
+          var stolenPoly = addedCell.intersectWithCell(originalCell);
+
+          if (stolenPoly.isValid()) {
+            var stolenArea = stolenPoly.getArea();
+            stolenRatio = stolenArea / addedCell.getArea();
+          }
+
+          stolenRatio = Math.round(stolenRatio * 10000) / 10000;
+
+          //modifiedCells.push( {cell: originalCell, stolenRatio: stolenRatio} );
+          modifiedCells.push({ seedIndex: originalCell.getSeed().seedIndex, weight: stolenRatio });
+        }
+      }
+
+      return modifiedCells;
+    }
+  }]);
+  return CellCollection;
+}();
 
 /**
 * The Interpolator is the API provider of natninter.
 */
-class Interpolator {
+
+var Interpolator = function () {
 
   /**
   * No param constructor
   */
-  constructor(){
+  function Interpolator() {
+    classCallCheck(this, Interpolator);
+
     this._seeds = [];
     this._output = { width: 256, height: 256 };
     this._samplingMap = [];
@@ -2545,223 +2613,263 @@ class Interpolator {
     this._onProgressCallback = null;
   }
 
-
   /**
    * Define a callback for the progress of making the map and the progress of making the output image
    * It will be called with 2 args: the progress in percentage (Number), and a description string
    * @param  {Function} cb - callback function
    */
-  onProgress( cb ){
-    if( cb && (typeof cb === "function")){
-      this._onProgressCallback = cb;
+
+
+  createClass(Interpolator, [{
+    key: 'onProgress',
+    value: function onProgress(cb) {
+      if (cb && typeof cb === "function") {
+        this._onProgressCallback = cb;
+      }
     }
-  }
 
+    /**
+    * Removes all the seeds
+    */
 
-  /**
-  * Removes all the seeds
-  */
-  cleanSeeds(){
-    this._seeds = [];
-    this._recomputeMap = true;
-  }
-
-
-  /**
-  * Add a seed to the interpolator. Note that the seed is not copied, only its reference is.
-  * This is convenient for updating the value of the seed from the outside and ecompute
-  * the interpolation without having to recompute the whole weight map.
-  * @param {Object} seed - of form {x: Number, y: Number, value: Number}
-  */
-  addSeed( seed ){
-    if( "x" in seed && "y" in seed && "value" in seed ){
-      this._seeds.push( seed );
+  }, {
+    key: 'cleanSeeds',
+    value: function cleanSeeds() {
+      this._seeds = [];
       this._recomputeMap = true;
     }
-  }
 
+    /**
+    * Add a seed to the interpolator. Note that the seed is not copied, only its reference is.
+    * This is convenient for updating the value of the seed from the outside and ecompute
+    * the interpolation without having to recompute the whole weight map.
+    * @param {Object} seed - of form {x: Number, y: Number, value: Number}
+    */
 
-  /**
-  * Add an array of seed
-  * @param {Array} seedArr - array of seeds, where each seed is of form {x: Number, y: Number, value: Number}
-  */
-  addSeeds( seedArr ){
-    for(var i=0; i<seedArr.length; i++){
-      this.addSeed( seedArr[i] );
+  }, {
+    key: 'addSeed',
+    value: function addSeed(seed) {
+      if ("x" in seed && "y" in seed && "value" in seed) {
+        this._seeds.push(seed);
+        this._recomputeMap = true;
+      }
     }
-  }
 
+    /**
+    * Add an array of seed
+    * @param {Array} seedArr - array of seeds, where each seed is of form {x: Number, y: Number, value: Number}
+    */
 
-  /**
-  * Define the size of the output image
-  * @param {Number} width - width of the output image
-  * @param {Number} height - height of the output image
-  */
-  setOutputSize( width, height ){
-    if( width > 0 && height > 0 ){
-      this._output.width = width;
-      this._output.height = height;
+  }, {
+    key: 'addSeeds',
+    value: function addSeeds(seedArr) {
+      for (var i = 0; i < seedArr.length; i++) {
+        this.addSeed(seedArr[i]);
+      }
     }
-  }
 
+    /**
+     * Get the number of seeds, mainly to add a validation steop after adding them.
+     * @return {Number} The number of seed
+     */
 
-  /**
-  * Check if all the seeds are inside the output area defined with `setOutputSize()`
-  * @return {Boolean} true if all are inside, false if at leas one is out
-  */
-  hasAllSeedsInside(){
-    var size = this._output;
-    return this._seeds.every( function(s){
-      return ( s.x>=0 && s.y>=0 && s.x<size.width && s.y<size.width );
-    })
-  }
-
-
-  /**
-  * Compute the sampling map. Automatically called by the update method when the
-  * map was never computed or when a seed have been added since.
-  * Though this method is not private and can be called to force recomputing the map.
-  * Note: if you have already computed a map for the exact same seed positions and output size,
-  * you can avoid recomputing it and use `getMap` and `setMap`.
-  */
-  generateMap(){
-    if( !this.hasAllSeedsInside() ){
-      console.log( 'ERR: some seeds are outside of the image. Use .setOutputSize() to change the output size or modify the seed.' );
-      return;
+  }, {
+    key: 'getNumberOfSeeds',
+    value: function getNumberOfSeeds() {
+      return this._seeds.length;
     }
-    this._generateSeedCells();
 
-    var w = this._output.width;
-    var h = this._output.height;
-    this._samplingMap = new Array( w*h );
+    /**
+    * Define the size of the output image
+    * @param {Number} width - width of the output image
+    * @param {Number} height - height of the output image
+    */
 
-    // for each pixel of the output image
-    for(var i=0; i<w; i++){
-      if( this._onProgressCallback )
-        this._onProgressCallback( Math.round(((i+1)/w)*100), "sampling map" );
+  }, {
+    key: 'setOutputSize',
+    value: function setOutputSize(width, height) {
+      if (width > 0 && height > 0) {
+        this._output.width = width;
+        this._output.height = height;
+      }
+    }
 
-      for(var j=0; j<h; j++){
+    /**
+    * Check if all the seeds are inside the output area defined with `setOutputSize()`
+    * @return {Boolean} true if all are inside, false if at leas one is out
+    */
 
-        var seedIndex = this.isAtSeedPosition(i, j);
-        var index1D = i + j*w;
+  }, {
+    key: 'hasAllSeedsInside',
+    value: function hasAllSeedsInside() {
+      var size = this._output;
+      return this._seeds.every(function (s) {
+        return s.x >= 0 && s.y >= 0 && s.x < size.width && s.y < size.width;
+      });
+    }
 
-        if( seedIndex === -1 ){
-          //this._samplingMap[ index1D ] = this._generatePixelCells(i, j);
-          var pixelCellCollection = this._generatePixelCells(i, j);
-          var stolenAreaData = this._seedCellCollection.getStolenAreaInfo( pixelCellCollection );
-          this._samplingMap[ index1D ] = stolenAreaData;
-        }else{
-          this._samplingMap[ index1D ] = [{seedIndex: seedIndex, weight: 1}];
+    /**
+    * Compute the sampling map. Automatically called by the update method when the
+    * map was never computed or when a seed have been added since.
+    * Though this method is not private and can be called to force recomputing the map.
+    * Note: if you have already computed a map for the exact same seed positions and output size,
+    * you can avoid recomputing it and use `getMap` and `setMap`.
+    * @return {Boolean} true if the process went well, false if error generating the map
+    */
+
+  }, {
+    key: 'generateMap',
+    value: function generateMap() {
+      if (!this.hasAllSeedsInside()) {
+        console.log('ERR: some seeds are outside of the image. Use .setOutputSize() to change the output size or modify the seed.');
+        return false;
+      }
+      this._generateSeedCells();
+
+      var w = this._output.width;
+      var h = this._output.height;
+      this._samplingMap = new Array(w * h);
+
+      // for each pixel of the output image
+      for (var i = 0; i < w; i++) {
+        if (this._onProgressCallback) this._onProgressCallback(Math.round((i + 1) / w * 100), "sampling map");
+
+        for (var j = 0; j < h; j++) {
+
+          var seedIndex = this.isAtSeedPosition(i, j);
+          var index1D = i + j * w;
+
+          if (seedIndex === -1) {
+            //this._samplingMap[ index1D ] = this._generatePixelCells(i, j);
+            var pixelCellCollection = this._generatePixelCells(i, j);
+            var stolenAreaData = this._seedCellCollection.getStolenAreaInfo(pixelCellCollection);
+            this._samplingMap[index1D] = stolenAreaData;
+          } else {
+            this._samplingMap[index1D] = [{ seedIndex: seedIndex, weight: 1 }];
+          }
         }
       }
+
+      return true;
     }
-  }
 
+    /**
+    * Get the sampling map object
+    */
 
-  /**
-  * Get the sampling map object
-  */
-  getMap( m ){
-    return this._samplingMap;
-  }
-
-
-  /**
-  * When you don't want to recompute the sampling map with `computeMap()` and reuse
-  * the exact same seed position and output size (of course, seed values can change)
-  * @param {Array} map - an already existing sampling map
-  */
-  setMap( map ){
-    if( map.length === (this._output.width * this._output.height)){
-      this._samplingMap = map;
-    }else{
-      console.log("The sampling map must be an 1D array of size output.x*output.y");
+  }, {
+    key: 'getMap',
+    value: function getMap(m) {
+      return this._samplingMap;
     }
-  }
 
+    /**
+    * When you don't want to recompute the sampling map with `computeMap()` and reuse
+    * the exact same seed position and output size (of course, seed values can change)
+    * @param {Array} map - an already existing sampling map
+    */
 
-  /**
-  * is the given position at the position of a seed?
-  * @param {Number} i - position along x axis
-  * @param {Number} j - position along y axis
-  * @return {Boolean} -1 if not, of the index of the seed if yes
-  */
-  isAtSeedPosition(i, j){
-    return this._seeds.findIndex(function(elem){ return (elem.x==i && elem.y==j)})
-  }
+  }, {
+    key: 'setMap',
+    value: function setMap(map) {
+      if (map.length === this._output.width * this._output.height) {
+        this._samplingMap = map;
+        return true;
+      } else {
+        console.log("The sampling map must be an 1D array of size output.x*output.y");
+        return false;
+      }
+    }
 
+    /**
+    * is the given position at the position of a seed?
+    * @param {Number} i - position along x axis
+    * @param {Number} j - position along y axis
+    * @return {Boolean} -1 if not, of the index of the seed if yes
+    */
 
-  /**
-  * [PRIVATE]
-  * Generate the voronoi diagram where sites are only seeds
-  */
-  _generateSeedCells(){
-    var bbox = {xl: 0, xr: this._output.width, yt: 0, yb: this._output.height};
-    var sites = this._seeds.map( function( s, i ){ return {x: s.x, y: s.y, seedIndex: i} });
+  }, {
+    key: 'isAtSeedPosition',
+    value: function isAtSeedPosition(i, j) {
+      return this._seeds.findIndex(function (elem) {
+        return elem.x == i && elem.y == j;
+      });
+    }
 
-    var voronoi = new rhillVoronoiCore();
-    var seedVoronoiDiagram = voronoi.compute(sites, bbox);
+    /**
+    * [PRIVATE]
+    * Generate the voronoi diagram where sites are only seeds
+    */
 
-    this._seedCellCollection = new CellCollection();
-    this._seedCellCollection.buildFromVoronoiDiagram( seedVoronoiDiagram );
-  }
+  }, {
+    key: '_generateSeedCells',
+    value: function _generateSeedCells() {
+      var bbox = { xl: 0, xr: this._output.width, yt: 0, yb: this._output.height };
+      var sites = this._seeds.map(function (s, i) {
+        return { x: s.x, y: s.y, seedIndex: i };
+      });
 
+      var voronoi = new rhillVoronoiCore();
+      var seedVoronoiDiagram = voronoi.compute(sites, bbox);
 
-  _generatePixelCells(i, j){
-    var voronoi = new rhillVoronoiCore();
-    var bbox = {xl: 0, xr: this._output.width, yt: 0, yb: this._output.height};
-    var sites = this._seeds.map( function( s, i ){ return {x: s.x, y: s.y, seedIndex: i} });
-    sites.push( {x: i, y: j, seedIndex: -1} );
-    var pixelVoronoiDiagram = voronoi.compute(sites, bbox);
+      this._seedCellCollection = new CellCollection();
+      this._seedCellCollection.buildFromVoronoiDiagram(seedVoronoiDiagram);
+    }
+  }, {
+    key: '_generatePixelCells',
+    value: function _generatePixelCells(i, j) {
+      var voronoi = new rhillVoronoiCore();
+      var bbox = { xl: 0, xr: this._output.width, yt: 0, yb: this._output.height };
+      var sites = this._seeds.map(function (s, i) {
+        return { x: s.x, y: s.y, seedIndex: i };
+      });
+      sites.push({ x: i, y: j, seedIndex: -1 });
+      var pixelVoronoiDiagram = voronoi.compute(sites, bbox);
 
-    var pixelCellCollection = new CellCollection();
-    pixelCellCollection.buildFromVoronoiDiagram( pixelVoronoiDiagram );
-    pixelCellCollection.referenceSeed(i, j);
+      var pixelCellCollection = new CellCollection();
+      pixelCellCollection.buildFromVoronoiDiagram(pixelVoronoiDiagram);
+      pixelCellCollection.referenceSeed(i, j);
 
-    return pixelCellCollection;
-  }
+      return pixelCellCollection;
+    }
 
+    /**
+    * Generate the output image as a floating points 1D array representing a 2D (1band)
+    * image.
+    * @return {Object} of form {_data: Float32Array, _metadata: {width: Number, height: Number}}
+    */
 
-  /**
-  * Generate the output image as a floating points 1D array representing a 2D (1band)
-  * image.
-  * @return {Object} of form {_data: Float32Array, _metadata: {width: Number, height: Number}}
-  */
-  generateImage(){
-    var l = this._output.width * this._output.height;
-    var outImg = new Float32Array( l );
-    var seeds = this._seeds;
-    var map = this._samplingMap;
+  }, {
+    key: 'generateImage',
+    value: function generateImage() {
+      var l = this._output.width * this._output.height;
+      var outImg = new Float32Array(l);
+      var seeds = this._seeds;
+      var map = this._samplingMap;
 
-    for(var i=0; i<l; i++){
-      if( this._onProgressCallback )
-        this._onProgressCallback( Math.round(((i+1)/l)*100), "output image" );
+      for (var i = 0; i < l; i++) {
+        if (this._onProgressCallback) this._onProgressCallback(Math.round((i + 1) / l * 100), "output image");
 
-      var pixelMap = map[i];
-      var sum = 0;
+        var pixelMap = map[i];
+        var sum = 0;
 
-      for(var m=0; m<pixelMap.length; m++){
-        sum += (pixelMap[m].weight *  seeds[ pixelMap[m].seedIndex ].value  );
+        for (var m = 0; m < pixelMap.length; m++) {
+          sum += pixelMap[m].weight * seeds[pixelMap[m].seedIndex].value;
+        }
+
+        outImg[i] = sum;
       }
 
-      outImg[i] = sum;
+      return {
+        _metadata: {
+          width: this._output.width,
+          height: this._output.height
+        },
+        _data: outImg
+      };
     }
-
-    return {
-      _metadata: {
-        width: this._output.width,
-        height: this._output.height
-      },
-      _data: outImg
-    }
-  }
-
-
-}
+  }]);
+  return Interpolator;
+}();
 
 exports.Interpolator = Interpolator;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-//# sourceMappingURL=natninter.js.map

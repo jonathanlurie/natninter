@@ -28,7 +28,7 @@ Use it in a HTML file:
 
 Use it in ES6:  
 ```js
-import { natninter } from 'natninter';
+import * as natninter from 'natninter';
 ```
 
 Use it in Node:  

@@ -1,4 +1,4 @@
-const natninter = require("../dist/natninter.js");
+const natninter = require("..");
 
 var nnInter = new natninter.Interpolator();
 

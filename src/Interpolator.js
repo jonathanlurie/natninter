@@ -71,6 +71,15 @@ class Interpolator {
 
 
   /**
+   * Get the number of seeds, mainly to add a validation steop after adding them.
+   * @return {Number} The number of seed
+   */
+  getNumberOfSeeds(){
+    return this._seeds.length;
+  }
+
+
+  /**
   * Define the size of the output image
   * @param {Number} width - width of the output image
   * @param {Number} height - height of the output image
@@ -101,11 +110,12 @@ class Interpolator {
   * Though this method is not private and can be called to force recomputing the map.
   * Note: if you have already computed a map for the exact same seed positions and output size,
   * you can avoid recomputing it and use `getMap` and `setMap`.
+  * @return {Boolean} true if the process went well, false if error generating the map
   */
   generateMap(){
     if( !this.hasAllSeedsInside() ){
       console.log( 'ERR: some seeds are outside of the image. Use .setOutputSize() to change the output size or modify the seed.' );
-      return;
+      return false;
     }
     this._generateSeedCells();
 
@@ -133,6 +143,8 @@ class Interpolator {
         }
       }
     }
+
+    return true;
   }
 
 
@@ -152,8 +164,10 @@ class Interpolator {
   setMap( map ){
     if( map.length === (this._output.width * this._output.height)){
       this._samplingMap = map;
+      return true;
     }else{
       console.log("The sampling map must be an 1D array of size output.x*output.y");
+      return false;
     }
   }
 
