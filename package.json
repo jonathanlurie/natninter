@@ -1,11 +1,11 @@
 {
   "name": "natninter",
-  "version": "0.1.2", 
+  "version": "0.1.2",
   "description": "Natural neighbor interpolation",
   "repository": "jonathanlurie/natninter",
   "entry": "src/main.js",
-  "main": "dist/natninter.cjs.js",
-  "commonjs": "dist/natninter.cjs.js",
+  "main": "dist/natninter.umd.js",
+  "cjs": "dist/natninter.cjs.js",
   "umd": "dist/natninter.umd.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

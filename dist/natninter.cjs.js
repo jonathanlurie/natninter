@@ -2873,3 +2873,4 @@ var Interpolator = function () {
 }();
 
 exports.Interpolator = Interpolator;
+//# sourceMappingURL=natninter.cjs.js.map

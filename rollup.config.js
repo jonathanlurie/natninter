@@ -35,10 +35,10 @@ export default [
   {
     input: pkg.entry,
     output: {
-      file: pkg.commonjs,
+      file: pkg.cjs,
+      sourcemap: true,
       format: 'cjs',
     },
-    sourcemap: false,
     plugins: [
       resolve(),
       commonjs({ include: 'node_modules/**' }), // so Rollup can convert other modules to ES module
