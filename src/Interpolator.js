@@ -99,7 +99,7 @@ class Interpolator {
   hasAllSeedsInside(){
     var size = this._output;
     return this._seeds.every( function(s){
-      return ( s.x>=0 && s.y>=0 && s.x<size.width && s.y<size.width );
+      return ( s.x>=0 && s.y>=0 && s.x<size.width && s.y<size.height );
     })
   }
 
